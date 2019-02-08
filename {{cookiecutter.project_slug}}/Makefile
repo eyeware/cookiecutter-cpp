@@ -12,7 +12,7 @@ install: all ## Build and install all targets
 	@ cmake --build build --target install
 
 configure: install_deps ## Configure the targets (CMake)
-	@ cd build && cmake ..
+	@ cd build && cmake -DCMAKE_BUILD_TYPE=Debug ..
 
 install_env: ## Install conda development environment
 	conda env create -f conda_env.yaml
