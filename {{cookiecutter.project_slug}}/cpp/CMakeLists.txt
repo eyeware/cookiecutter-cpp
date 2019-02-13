@@ -1,6 +1,7 @@
 # {{ cookiecutter.project_name }}
 # {{ cookiecutter.description }}
 # Copyright {{ cookiecutter.year }}, {{ cookiecutter.author }}
+
 cmake_minimum_required(VERSION 3.1)
 project({{ cookiecutter.project_slug }} VERSION {{ cookiecutter.version }} LANGUAGES C CXX)
 set(PROJECT_DESCRIPTION   "{{ cookiecutter.description }}")
@@ -13,9 +14,10 @@ set(PROJECT_URL           "https://{{ cookiecutter.git_server }}/{{ cookiecutter
 # Add find_<package_name> files to cmake-modules directory.
 # ------------------------------------------------------------------------------
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake-modules")
+#Make sure that our modules are captured first.
+list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake)
 
-# Download automatically, you can also just copy the conan.cmake file
+# Installing conan dependencies
 if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
    message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
    file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/v0.13/conan.cmake"
@@ -28,34 +30,32 @@ conan_cmake_run(CONANFILE conanfile.txt  # or relative build/conanfile.txt
                 BASIC_SETUP CMAKE_TARGETS
                 BUILD missing)
 
+
+# Project directory structure for install
+include(CheckCXXCompilerFlag)
+include(GNUInstallDirs)
+include(CMakePackageConfigHelpers)
+
+
 # Build flags
-set (CMAKE_CXX_STANDARD {{ cookiecutter.cpp_standard }})
+set (CMAKE_CXX_STANDARD {{ cookiecutter.cpp_standard }}) # one of { 03, 11, 14 }
 
 
 # Enable only coverage in Debug mode, avoid adding debug symbols for Release mode.
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   include(CodeCoverage)
-  APPEND_COVERAGE_COMPILER_FLAGS()
+  append_coverage_compiler_flags()
 endif()
 
 # ------------------------------------------------------------------------------
-# Setup Compiler Flags
+# Setup Compiler Flags/Features
 # ------------------------------------------------------------------------------
-
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-
-# make sure you want to use -march=native
-set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3")
-{% if cookiecutter.pedantic -%}
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wextra -Werror -pedantic")
-{%- endif %}
 
 
 # ------------------------------------------------------------------------------
-# Features
+# Project Features
 # ------------------------------------------------------------------------------
 add_subdirectory(src)
-
 
 
 # ------------------------------------------------------------------------------
@@ -66,12 +66,32 @@ add_subdirectory(src)
 
 
 enable_testing()
-set(CTEST_OUTPUT_ON_FAILURE 1)
+set(CTEST_OUTPUT_ON_FAILURE ON)
 
 # Enable only coverage in Debug mode, avoid adding debug symbols for Release mode.
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-  setup_target_for_coverage_gcovr_html( NAME ${PROJECT_NAME}_cov EXECUTABLE ${PROJECT_NAME}_test )
+  setup_target_for_coverage_gcovr_html( NAME coverage EXECUTABLE ${PROJECT_NAME}_test )
 endif()
 
 add_subdirectory(test)
 add_subdirectory(doc)
+
+# register which targets to export to "component" ${PROJECT_NAME}-export
+install(TARGETS ${PROJECT_NAME}
+    EXPORT {{ cookiecutter.project_slug }}-export
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+
+# setup the install of the previously registered components
+install(EXPORT {{ cookiecutter.project_slug }}-export
+  FILE
+    {{ cookiecutter.project_slug }}Targets.cmake
+  NAMESPACE
+    {{ cookiecutter.project_slug }}::
+  DESTINATION
+    ${CMAKE_INSTALL_LIBDIR}/cmake/{{ cookiecutter.project_slug }}
+)
+
+
+

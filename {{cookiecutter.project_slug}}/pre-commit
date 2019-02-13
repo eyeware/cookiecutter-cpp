@@ -60,7 +60,5 @@ check_test() {
 # run the style checks
 check_format
 {% endif %}
-{% if cookiecutter.pedantic -%}
 # run the test checks
 check_test
-{%- endif %}
