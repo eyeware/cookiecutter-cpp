@@ -8,8 +8,7 @@ test: configure ## Build all targets and run the test suite
 	@ cmake --build build --target rock_test
 	@ cmake --build build --target test 
 
-check: configure ## Build all targets and run the test suite
-	@ cmake --build build --target rock_test
+check: configure ## Build all targets and run the test suite, providing the output of the failed tests.
 	@ cmake --build build --target check 
 
 install: all ## Build and install all targets

@@ -63,31 +63,13 @@ add_subdirectory(src/core)
 # Setup tests and checks
 # ------------------------------------------------------------------------------
 
-# (catch must be configured to generate a main class per test).
-
-
 enable_testing()
-
-# there is no way for ctest to display test output on failure from whithim cmake
-# so add this custom command.
-# SEE: 
-# https://stackoverflow.com/a/36729074/3978614
-# https://stackoverflow.com/a/31124523/3978614
-add_custom_target(check 
-    ${CMAKE_COMMAND} -E echo CWD=${CMAKE_BINARY_DIR}
-    COMMAND ${CMAKE_COMMAND} -E echo CMD=${CMAKE_CTEST_COMMAND} -C $<CONFIG>
-    COMMAND ${CMAKE_COMMAND} -E echo ----------------------------------
-    COMMAND ${CMAKE_COMMAND} -E env CTEST_OUTPUT_ON_FAILURE=1
-        ${CMAKE_CTEST_COMMAND} -C $<CONFIG> 
-        WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-        DEPENDS ALL_BUILD
-)
 
 # Enable only coverage in Debug mode, avoid adding debug symbols for Release mode.
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   # TODO: check per test coverage or coverage all tests.
   setup_target_for_coverage_gcovr_html(NAME coverage EXECUTABLE core_test )
-  # setup_target_for_coverage_gcovr_html(NAME coverage EXECUTABLE ${MODULE1}_test )
+  # setup_target_for_coverage_gcovr_html(NAME coverage EXECUTABLE module1_test )
 endif()
 
 add_subdirectory(test)
