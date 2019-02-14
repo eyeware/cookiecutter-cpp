@@ -5,8 +5,12 @@ doc: configure ## Build the documentation (Doxygen)
 	@ make doc -C build
 
 test: configure ## Build all targets and run the test suite
-	@ cmake --build build --target {{ cookiecutter.project_slug }}_test
+	@ cmake --build build --target rock_test
 	@ cmake --build build --target test 
+
+check: configure ## Build all targets and run the test suite
+	@ cmake --build build --target rock_test
+	@ cmake --build build --target check 
 
 install: all ## Build and install all targets
 	@ cmake --build build --target install

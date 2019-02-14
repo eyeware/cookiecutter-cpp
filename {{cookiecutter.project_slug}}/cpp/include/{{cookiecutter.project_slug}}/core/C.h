@@ -7,10 +7,11 @@
 #define {{cookiecutter.project_slug | upper }}_C_H
 
 #include <string>
-#include "{{cookiecutter.project_slug}}/A.h"
-#include "{{cookiecutter.project_slug}}/B.h"
+#include "{{cookiecutter.project_slug}}/core/A.h"
+#include "{{cookiecutter.project_slug}}/core/B.h"
 
 namespace {{cookiecutter.project_slug}} {
+namespace core {
 
     class C {
         bool m_booly;
@@ -39,6 +40,7 @@ namespace {{cookiecutter.project_slug}} {
         std::string overloadMethod(A a, C c);
     };
 
+} // namespace core
 } // namespace {{cookiecutter.project_slug}}
 
 #endif // {{cookiecutter.project_slug | upper }}_C_H

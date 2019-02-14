@@ -7,6 +7,7 @@
 #define {{cookiecutter.project_slug | upper }}_B_H
 
 namespace {{cookiecutter.project_slug}} {
+namespace core {
 
     class B {
           int m_number;
@@ -29,6 +30,7 @@ namespace {{cookiecutter.project_slug}} {
           const int get_number() const;
     };
 
+} // namespace core
 } // namespace {{cookiecutter.project_slug}}
 
 #endif // {{cookiecutter.project_slug | upper }}_B_H

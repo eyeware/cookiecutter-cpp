@@ -1,5 +1,6 @@
 # Documentation for {{ cookiecutter.project_slug }}
 # Requires Doxygen
+
 find_package(Doxygen)
 if (DOXYGEN_FOUND)
     # Populate the Doxyfile

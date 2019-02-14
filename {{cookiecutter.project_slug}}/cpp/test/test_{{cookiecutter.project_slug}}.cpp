@@ -1,6 +1,11 @@
 #define CATCH_CONFIG_MAIN
 #include "catch.hpp" 
 
-TEST_CASE("{{ cookiecutter.project_slug | capitalize }}Test", "[all]") {
-    REQUIRE( 1 == 1 );
-}
+/*
+This file contains only the main file, and serves a an entrypoint to execute
+project tests.
+
+Tests are splited by module, and then linked with this file.
+In each module tests are tagged, so you can specify specific tests to run, based
+on some filter options.
+*/ 

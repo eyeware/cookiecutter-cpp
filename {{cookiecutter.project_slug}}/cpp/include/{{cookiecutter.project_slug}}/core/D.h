@@ -6,9 +6,10 @@
 #ifndef {{cookiecutter.project_slug | upper }}_D_H
 #define {{cookiecutter.project_slug | upper }}_D_H
 
-#include "{{cookiecutter.project_slug}}/A.h"
+#include "{{cookiecutter.project_slug}}/core/A.h"
 
 namespace {{cookiecutter.project_slug}} {
+namespace core {
 
     class D : public A {
         std::string m_name;
@@ -28,6 +29,7 @@ namespace {{cookiecutter.project_slug}} {
         const std::string process_private_class() const;
     };
 
+} // namespace core
 } // namespace {{cookiecutter.project_slug}}
 
 #endif // {{cookiecutter.project_slug | upper }}_D_H

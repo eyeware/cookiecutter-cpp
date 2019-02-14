@@ -4,9 +4,10 @@
  */
 
 #include <string>
-#include "{{cookiecutter.project_slug}}/A.h"
+#include "{{cookiecutter.project_slug}}/core/A.h"
 
-using namespace {{cookiecutter.project_slug}};
+namespace {{cookiecutter.project_slug}} {
+namespace core {
 
 // constructors
 A::A() {
@@ -65,3 +66,6 @@ B* A::returnRawPointer() {
 std::shared_ptr<B> A::returnSharedPointer() {
     return std::make_shared<B>();
 }
+
+} // namespace core
+} // namespace {{cookiecutter.project_slug}}

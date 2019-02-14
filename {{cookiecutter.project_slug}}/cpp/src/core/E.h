@@ -11,7 +11,7 @@
 // This is a private class, it is not exposed to the public API of the project.
 
 namespace {{cookiecutter.project_slug}} {
-
+namespace core {
 namespace detail {
 
     class E {
@@ -29,7 +29,7 @@ namespace detail {
     };
 
 } // namespace detail
-
+} // namespace core
 } // namespace {{cookiecutter.project_slug}}
 
 #endif // {{cookiecutter.project_slug | upper }}_E_H

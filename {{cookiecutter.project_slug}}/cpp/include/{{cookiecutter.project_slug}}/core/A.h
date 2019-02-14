@@ -8,9 +8,10 @@
 
 #include <memory>
 #include <string>
-#include "{{cookiecutter.project_slug}}/B.h"
+#include "{{cookiecutter.project_slug}}/core/B.h"
 
 namespace {{cookiecutter.project_slug}} {
+namespace core {
 
     class A {
         std::string m_name;
@@ -42,6 +43,7 @@ namespace {{cookiecutter.project_slug}} {
         std::shared_ptr<B> returnSharedPointer();
     };
 
+} // namespace core
 } // namespace {{cookiecutter.project_slug}}
 
 #endif // {{cookiecutter.project_slug | upper }}_A_H

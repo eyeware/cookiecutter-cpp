@@ -3,9 +3,10 @@
  *
  */
 
-#include "{{cookiecutter.project_slug}}/B.h"
+#include "{{cookiecutter.project_slug}}/core/B.h"
 
-using namespace {{cookiecutter.project_slug}};
+namespace {{cookiecutter.project_slug}} {
+namespace core {
 
 // constructors
 B::B() {
@@ -37,3 +38,6 @@ const int B::get_number() const
 {
     return m_number;
 }
+
+} // namespace core
+} // namespace {{cookiecutter.project_slug}}

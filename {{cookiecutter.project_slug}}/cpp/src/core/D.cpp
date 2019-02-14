@@ -3,12 +3,13 @@
  *
  */
 
-#include "{{cookiecutter.project_slug}}/D.h"
+#include "{{cookiecutter.project_slug}}/core/D.h"
 
 // private include
 #include "E.h"
 
 namespace {{cookiecutter.project_slug}} {
+namespace core {
 
 // constructors
 D::D() {
@@ -38,4 +39,5 @@ const std::string D::get_class_name() const
     return "class(D)";
 }
 
+} // namespace core
 } // namespace {{cookiecutter.project_slug}}

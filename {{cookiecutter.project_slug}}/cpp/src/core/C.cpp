@@ -3,9 +3,10 @@
  *
  */
 
-#include "{{cookiecutter.project_slug}}/C.h"
+#include "{{cookiecutter.project_slug}}/core/C.h"
 
-using namespace {{cookiecutter.project_slug}};
+namespace {{cookiecutter.project_slug}} {
+namespace core {
 
 // constructors
 C::C() {
@@ -54,3 +55,6 @@ std::string C::overloadMethod(A a, B b) {
 std::string C::overloadMethod(A a, C c) {
     return "A_C";
 }
+
+} // namespace core
+} // namespace {{cookiecutter.project_slug}}
