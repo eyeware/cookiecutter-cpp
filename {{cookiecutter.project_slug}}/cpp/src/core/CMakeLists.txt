@@ -35,6 +35,10 @@ target_link_libraries(${MODULE_NAME} PUBLIC ${MODULE_NAME}_obj)
 # Add library to the export install target
 # TODO: this ${MODULE_NAME}_obj gets exported, it make no sense, check for a 
 # better solution, that might include droping the obj library ...
+# it seems to be described here, but I dont understand very well the solution
+# https://gitlab.kitware.com/cmake/cmake/issues/14778
+# https://gitlab.kitware.com/cmake/cmake/issues/17357
+# https://gitlab.kitware.com/cmake/community/wikis/doc/tutorials/Object-Library
 install(TARGETS ${MODULE_NAME} ${MODULE_NAME}_obj
   EXPORT ${PROJECT_NAME}-targets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME} COMPONENT Libraries
