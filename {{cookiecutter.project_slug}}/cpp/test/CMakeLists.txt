@@ -10,12 +10,6 @@ add_subdirectory(core)
 # make sure you execute "conan install .." in the build directory
 target_link_libraries(${PROJECT_NAME}_test CONAN_PKG::catch2 core) # module1)
 
-
-
-
-
-
-
 # Register the tests
 # TODO: check about registering test names to filter the tests
 # check CTest

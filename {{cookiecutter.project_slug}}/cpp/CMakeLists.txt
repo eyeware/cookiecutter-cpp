@@ -32,14 +32,19 @@ conan_cmake_run(CONANFILE conanfile.txt  # or relative build/conanfile.txt
 
 
 # Project directory structure for install
-include(CheckCXXCompilerFlag)
+include(CheckCXXCompilerFlag) # TODO: use new way
 include(GNUInstallDirs)
-include(CMakePackageConfigHelpers)
+
+
+include(CMakePackageConfigHelpers) # TODO:
 
 
 # Build flags
 set (CMAKE_CXX_STANDARD {{ cookiecutter.cpp_standard }}) # one of { 03, 11, 14 }
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Don't use non standard compiler extensions, for portability
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Enable only coverage in Debug mode
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
@@ -76,22 +81,16 @@ add_subdirectory(test)
 
 add_subdirectory(doc)
 
-# register which targets to export to "component" ${PROJECT_NAME}-export
-# install(TARGETS ${PROJECT_NAME}
-#    EXPORT {{ cookiecutter.project_slug }}-export
-#    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-#)
 
-# setup the install of the previously registered components
-#install(EXPORT {{ cookiecutter.project_slug }}-export
-#  FILE
-#    {{ cookiecutter.project_slug }}Targets.cmake
-#  NAMESPACE
-#    {{ cookiecutter.project_slug }}::
-#  DESTINATION
-#    ${CMAKE_INSTALL_LIBDIR}/cmake/{{ cookiecutter.project_slug }}
-#)
+# install previously registered targets
+install(EXPORT {{ cookiecutter.project_slug }}-targets
+  FILE
+    {{ cookiecutter.project_slug }}Targets.cmake
+  NAMESPACE
+    {{ cookiecutter.project_slug }}::
+  DESTINATION
+    ${CMAKE_INSTALL_LIBDIR}/cmake/{{ cookiecutter.project_slug }}
+)
 
 
 
