@@ -1,11 +1,9 @@
-# Target:   core
+# Module:   core
 # Type:     Library
+# Type:     Python Extensions
 
 
-# use object libraries
-
-set(MODULE_NAME core) # breacking new cmake recomendations to make it simpler
-
+set(MODULE_NAME core) # breaking new cmake recomendations to make it simpler
 set(MODULE_OBJECT_LIBRARY_NAME ${MODULE_NAME}-objects)
 set(MODULE_SHARED_LIBRARY_NAME ${MODULE_NAME})
 set(MODULE_STATIC_LIBRARY_NAME ${MODULE_NAME}-static)
@@ -62,9 +60,17 @@ if (BUILD_PYBIND11_BINDINGS)
     target_link_libraries(${MODULE_PYTHON_TARGET_NAME} PRIVATE ${MODULE_STATIC_LIBRARY_NAME})
   else()
     target_link_libraries(${MODULE_PYTHON_TARGET_NAME} PRIVATE ${MODULE_SHARED_LIBRARY_NAME})
+
     # python extension modules are installed in the same location of the lib 
     # module, set the rpath, so that the lib searchs first in the same location.
     # SEE: https://gitlab.kitware.com/cmake/community/wikis/doc/cmake/RPATH-handling#different-rpath-settings-within-one-project
+
+    # NOTE: for conda packages conda-build alreadu performs some 
+    # modules, by the conda install or build.
+    # SEE: point 8 of 
+    # https://docs.conda.io/projects/conda-build/en/latest/source/concepts/recipe.html#conda-build-process
+    # SEE:
+    # https://news.ycombinator.com/item?id=16745892
     set_target_properties(${MODULE_PYTHON_TARGET_NAME} PROPERTIES INSTALL_RPATH "./") 
   endif()
 
