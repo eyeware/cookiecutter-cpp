@@ -12,18 +12,18 @@ namespace core {
 B::B() {
 }
 
-B::B(int number) : m_number(number) {
+B::B(int number) : m_private(number) {
 }
 
 // copy constructor
-B::B(const B& other) : m_number(other.m_number) {
+B::B(const B& other) : m_private(other.m_private) {
 }
 
 // copy assignment operator
 B& B::operator=(const B& other) {
     if(this != &other)
     {
-        m_number = other.m_number;
+        m_private = other.m_private;
     }
 
     return *this;
@@ -34,9 +34,9 @@ B::~B() {
 }
 
 // getter
-const int B::get_number() const
+const int B::get_private() const
 {
-    return m_number;
+    return m_private;
 }
 
 } // namespace core

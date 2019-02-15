@@ -31,6 +31,24 @@ set_property(TARGET ${MODULE_NAME}_obj
 add_library(${MODULE_NAME} SHARED)
 target_link_libraries(${MODULE_NAME} PUBLIC ${MODULE_NAME}_obj)
 
+# add a dependency for all libraries of the project
+target_link_libraries(${PROJECT_NAME} INTERFACE ${MODULE_NAME})
+
+
+if (BUILD_PYBIND11_BINDINGS)
+  set(PYTHON_PACKAGE_NAME ${PROJECT_NAME}.${MODULE_NAME})
+
+  pybind11_add_module(${PYTHON_PACKAGE_NAME} ${MODULE_NAME}_python_bindings.cpp)
+
+  target_link_libraries(${PYTHON_PACKAGE_NAME} PRIVATE ${MODULE_NAME})
+  #set_target_properties(foo PROPERTIES OUTPUT_NAME mymodule/foo)
+
+  target_link_libraries(python_bindings INTERFACE ${PYTHON_PACKAGE_NAME}) 
+
+  install(TARGETS ${PYTHON_PACKAGE_NAME}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME} COMPONENT python
+  )
+endif()
 
 # Add library to the export install target
 # TODO: this ${MODULE_NAME}_obj gets exported, it make no sense, check for a 
@@ -39,10 +57,11 @@ target_link_libraries(${MODULE_NAME} PUBLIC ${MODULE_NAME}_obj)
 # https://gitlab.kitware.com/cmake/cmake/issues/14778
 # https://gitlab.kitware.com/cmake/cmake/issues/17357
 # https://gitlab.kitware.com/cmake/community/wikis/doc/tutorials/Object-Library
+
 install(TARGETS ${MODULE_NAME} ${MODULE_NAME}_obj
   EXPORT ${PROJECT_NAME}-targets
-  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME} COMPONENT Libraries
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME} COMPONENT Libraries # ?? what is this ??
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME} COMPONENT libs
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME} COMPONENT libs # ?? what is this ??
 )
 
 # install module files
@@ -52,7 +71,7 @@ install(FILES
     ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/${MODULE_NAME}/C.h
     ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/${MODULE_NAME}/D.h
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME}/${MODULE_NAME} 
-  COMPONENT Headers
+  COMPONENT dev
 )
 
 # TODO: add options to build static libs,

@@ -67,5 +67,11 @@ std::shared_ptr<B> A::returnSharedPointer() {
     return std::make_shared<B>();
 }
 
+// non-member function to get the name of an A object
+const std::string get_name_of_other(const A& other)
+{
+    return other.get_name();
+}
+
 } // namespace core
 } // namespace {{cookiecutter.project_slug}}

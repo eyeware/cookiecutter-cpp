@@ -13,8 +13,8 @@ TEST_CASE( "Hierarchy test", "[hierarchy]" ) {
   B b(12);
 
   REQUIRE( a.get_name() == "I am son of A." );
-  REQUIRE( d.get_name() == "I am son of D." );
-  REQUIRE( b.get_number() == 12 );
+  REQUIRE( d.get_name() == "derived" );
+  REQUIRE( b.get_private() == 12 );
 }
 
 // Another test, with two tags.

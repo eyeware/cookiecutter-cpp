@@ -10,7 +10,7 @@ namespace {{cookiecutter.project_slug}} {
 namespace core {
 
     class B {
-          int m_number;
+          int m_private;
 
       public:
           // constructors
@@ -27,7 +27,10 @@ namespace core {
           ~B();
 
           // getter
-          const int get_number() const;
+          const int get_private() const;
+
+          // public data member
+          int m_public;
     };
 
 } // namespace core

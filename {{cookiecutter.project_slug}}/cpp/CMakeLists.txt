@@ -9,6 +9,12 @@ set(PROJECT_AUTHOR        "{{ cookiecutter.author }}")
 set(PROJECT_URL           "https://{{ cookiecutter.git_server }}/{{ cookiecutter.username }}/{{ cookiecutter.project_slug }}")
 
 
+option(BUILD_SWIG_BINDINGS "Build swig python bindings." ON)
+option(BUILD_PYBIND11_BINDINGS "Build pybind11 python bindings." ON)
+
+option(BUILD_DOC "Build code documentation using Doxygen." OFF)
+option(BUILD_TESTS "Build project tests" ON) # TODO
+
 # ------------------------------------------------------------------------------
 # Add external cmake modules to project.
 # Add find_<package_name> files to cmake-modules directory.
@@ -35,7 +41,6 @@ conan_cmake_run(CONANFILE conanfile.txt  # or relative build/conanfile.txt
 include(CheckCXXCompilerFlag) # TODO: use new way
 include(GNUInstallDirs)
 
-
 include(CMakePackageConfigHelpers) # TODO:
 
 
@@ -46,11 +51,36 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Don't use non standard compiler extensions, for portability
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+# add target for all modules of the project.
+# NOTE: add target_link_libraries(${PROJECCT_NAME} <module name>) in each
+# module CMakeLists.
+add_library(${PROJECT_NAME} INTERFACE)
+
+if (BUILD_PYBIND11_BINDINGS)
+    find_package(pybind11 REQUIRED)
+
+    # add target for all python modules
+    # NOTE: add target_link_libraries(python_bindings <module name>) in each
+    # module CMakeLists.
+    add_library(python_bindings INTERFACE) 
+endif()
+
+if (BUILD_SWIG_BINDINGS)
+# TODO: clarify some issues.
+# # ommit python version, allow it to capture the one that is available
+#    find_package(Python REQUIRED) # TODO: check imported targets, new cmake
+#    include_directories(${PYTHON_INCLUDE_DIRS}) # TODO: don't do this, adding python include to all targers
+#    include_directories(${PYTHON_INCLUDE_PATH})
+#    include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+#    find_package(SWIG REQUIRED)
+endif()
+
 # Enable only coverage in Debug mode
 if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   include(CodeCoverage)
   append_coverage_compiler_flags()
 endif()
+
 
 # ------------------------------------------------------------------------------
 # Setup Compiler Flags/Features
@@ -82,7 +112,7 @@ add_subdirectory(test)
 add_subdirectory(doc)
 
 
-# install previously registered targets
+# install targets cmake file, previously registered targets in each module.
 install(EXPORT {{ cookiecutter.project_slug }}-targets
   FILE
     {{ cookiecutter.project_slug }}Targets.cmake

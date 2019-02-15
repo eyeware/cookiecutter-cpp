@@ -25,7 +25,7 @@ bool D::is_derived() {
 // getter
 const std::string D::get_name() const
 {
-    return m_name;
+    return "derived";
 }
 
 const std::string D::process_private_class() const
