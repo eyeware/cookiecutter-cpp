@@ -6,14 +6,21 @@
 
 set(MODULE_NAME core) # breacking new cmake recomendations to make it simpler
 
-add_library(${MODULE_NAME}_obj OBJECT
+set(MODULE_OBJECT_LIBRARY_NAME lib${MODULE_NAME}-objects)
+set(MODULE_SHARED_LIBRARY_NAME lib${MODULE_NAME})
+set(MODULE_STATIC_LIBRARY_NAME lib${MODULE_NAME}-static)
+set(MODULE_PYTHON_NAME ${MODULE_NAME})
+set(MODULE_PYTHON_TARGET_NAME ${MODULE_NAME}-python)
+
+
+add_library(${MODULE_OBJECT_LIBRARY_NAME} OBJECT
 A.cpp
 B.cpp
 C.cpp
 D.cpp
 E.cpp)
 
-target_include_directories(${MODULE_NAME}_obj
+target_include_directories(${MODULE_OBJECT_LIBRARY_NAME}
   PUBLIC 
     $<INSTALL_INTERFACE:include>
     $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> # project public includes
@@ -23,29 +30,34 @@ target_include_directories(${MODULE_NAME}_obj
 
 # shared libraries need PIC, if they are compile from the obj files, they also 
 # neet
-set_property(TARGET ${MODULE_NAME}_obj 
+set_property(TARGET ${MODULE_OBJECT_LIBRARY_NAME}
   PROPERTY POSITION_INDEPENDENT_CODE ON
 )
 
 # shared and static libraries built from the same object files
-add_library(${MODULE_NAME} SHARED)
-target_link_libraries(${MODULE_NAME} PUBLIC ${MODULE_NAME}_obj)
+add_library(${MODULE_SHARED_LIBRARY_NAME} SHARED)
+target_link_libraries(${MODULE_SHARED_LIBRARY_NAME} PUBLIC ${MODULE_OBJECT_LIBRARY_NAME})
+
+# the static lib is used to link with the python bindings
+if(${BUILD_STATIC} OR ${BUILD_PYBIND11_BINDINGS})
+  add_library(${MODULE_STATIC_LIBRARY_NAME} STATIC)
+  target_link_libraries(${MODULE_STATIC_LIBRARY_NAME} PUBLIC ${MODULE_OBJECT_LIBRARY_NAME})
+endif()
 
 # add a dependency for all libraries of the project
-target_link_libraries(${PROJECT_NAME} INTERFACE ${MODULE_NAME})
-
+# target_link_libraries(${PROJECT_NAME} INTERFACE ${MODULE_SHARED_LIBRARY_NAME})
 
 if (BUILD_PYBIND11_BINDINGS)
-  set(PYTHON_PACKAGE_NAME ${PROJECT_NAME}.${MODULE_NAME})
+  pybind11_add_module(${MODULE_PYTHON_TARGET_NAME} ${MODULE_NAME}_python_bindings.cpp)
 
-  pybind11_add_module(${PYTHON_PACKAGE_NAME} ${MODULE_NAME}_python_bindings.cpp)
+  # change the name of python modules: https://github.com/pybind/python_example/issues/26
+  set_target_properties(${MODULE_PYTHON_TARGET_NAME} PROPERTIES OUTPUT_NAME ${MODULE_PYTHON_NAME})
 
-  target_link_libraries(${PYTHON_PACKAGE_NAME} PRIVATE ${MODULE_NAME})
-  #set_target_properties(foo PROPERTIES OUTPUT_NAME mymodule/foo)
+  target_link_libraries(${MODULE_PYTHON_TARGET_NAME} PRIVATE ${MODULE_STATIC_LIBRARY_NAME})
 
-  target_link_libraries(python_bindings INTERFACE ${PYTHON_PACKAGE_NAME}) 
+  target_link_libraries(python_bindings INTERFACE ${MODULE_PYTHON_TARGET_NAME}) # TODO: review this target name.
 
-  install(TARGETS ${PYTHON_PACKAGE_NAME}
+  install(TARGETS ${MODULE_PYTHON_TARGET_NAME}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME} COMPONENT python
   )
 endif()
@@ -58,13 +70,23 @@ endif()
 # https://gitlab.kitware.com/cmake/cmake/issues/17357
 # https://gitlab.kitware.com/cmake/community/wikis/doc/tutorials/Object-Library
 
-install(TARGETS ${MODULE_NAME} ${MODULE_NAME}_obj
+# install shared lib
+install(TARGETS ${MODULE_SHARED_LIBRARY_NAME} ${MODULE_OBJECT_LIBRARY_NAME}
   EXPORT ${PROJECT_NAME}-targets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME} COMPONENT libs
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME} COMPONENT libs # ?? what is this ??
 )
 
-# install module files
+# install static lib
+if(BUILD_STATIC)
+  install(TARGETS ${MODULE_STATIC_LIBRARY_NAME}
+    EXPORT ${PROJECT_NAME}-targets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME} COMPONENT libs
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME} COMPONENT libs # ?? what is this ??
+  )
+endif()
+
+# install module header files
 install(FILES 
     ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/${MODULE_NAME}/A.h
     ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME}/${MODULE_NAME}/B.h
@@ -74,8 +96,5 @@ install(FILES
   COMPONENT dev
 )
 
-# TODO: add options to build static libs,
-# add_library(${MODULE_NAME}_static STATIC)
-# target_link_libraries(${MODULE_NAME}_static ${MODULE_NAME}_obj)
 
 

@@ -9,11 +9,14 @@ set(PROJECT_AUTHOR        "{{ cookiecutter.author }}")
 set(PROJECT_URL           "https://{{ cookiecutter.git_server }}/{{ cookiecutter.username }}/{{ cookiecutter.project_slug }}")
 
 
+option(BUILD_STATIC "Build static libraries." OFF)
 option(BUILD_SWIG_BINDINGS "Build swig python bindings." ON)
 option(BUILD_PYBIND11_BINDINGS "Build pybind11 python bindings." ON)
 
 option(BUILD_DOC "Build code documentation using Doxygen." OFF)
 option(BUILD_TESTS "Build project tests" ON) # TODO
+
+
 
 # ------------------------------------------------------------------------------
 # Add external cmake modules to project.
