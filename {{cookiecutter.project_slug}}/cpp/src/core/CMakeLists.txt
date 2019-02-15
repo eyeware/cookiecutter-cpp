@@ -6,12 +6,13 @@
 
 set(MODULE_NAME core) # breacking new cmake recomendations to make it simpler
 
-set(MODULE_OBJECT_LIBRARY_NAME lib${MODULE_NAME}-objects)
-set(MODULE_SHARED_LIBRARY_NAME lib${MODULE_NAME})
-set(MODULE_STATIC_LIBRARY_NAME lib${MODULE_NAME}-static)
+set(MODULE_OBJECT_LIBRARY_NAME ${MODULE_NAME}-objects)
+set(MODULE_SHARED_LIBRARY_NAME ${MODULE_NAME})
+set(MODULE_STATIC_LIBRARY_NAME ${MODULE_NAME}-static)
 set(MODULE_PYTHON_NAME ${MODULE_NAME})
 set(MODULE_PYTHON_TARGET_NAME ${MODULE_NAME}-python)
-
+option(ENABLE_MODULE_CORE_PYTHON_STATIC_LINK_LIBRARY 
+  "Link the python module with the static library." OFF)
 
 add_library(${MODULE_OBJECT_LIBRARY_NAME} OBJECT
 A.cpp
@@ -50,10 +51,22 @@ endif()
 if (BUILD_PYBIND11_BINDINGS)
   pybind11_add_module(${MODULE_PYTHON_TARGET_NAME} ${MODULE_NAME}_python_bindings.cpp)
 
-  # change the name of python modules: https://github.com/pybind/python_example/issues/26
+  # change the name of python modules 
+  # SEE: https://github.com/pybind/python_example/issues/26
   set_target_properties(${MODULE_PYTHON_TARGET_NAME} PROPERTIES OUTPUT_NAME ${MODULE_PYTHON_NAME})
 
-  target_link_libraries(${MODULE_PYTHON_TARGET_NAME} PRIVATE ${MODULE_STATIC_LIBRARY_NAME})
+  if(ENABLE_MODULE_CORE_PYTHON_STATIC_LINK_LIBRARY)
+    # NOTE: there is an issue with this aproach, if different python modules share
+    # the same libs then it might break static like functionality in the libs, as 
+    # each module will be static linked with the python extension module.
+    target_link_libraries(${MODULE_PYTHON_TARGET_NAME} PRIVATE ${MODULE_STATIC_LIBRARY_NAME})
+  else()
+    target_link_libraries(${MODULE_PYTHON_TARGET_NAME} PRIVATE ${MODULE_SHARED_LIBRARY_NAME})
+    # python extension modules are installed in the same location of the lib 
+    # module, set the rpath, so that the lib searchs first in the same location.
+    # SEE: https://gitlab.kitware.com/cmake/community/wikis/doc/cmake/RPATH-handling#different-rpath-settings-within-one-project
+    set_target_properties(${MODULE_PYTHON_TARGET_NAME} PROPERTIES INSTALL_RPATH "./") 
+  endif()
 
   target_link_libraries(python_bindings INTERFACE ${MODULE_PYTHON_TARGET_NAME}) # TODO: review this target name.
 
@@ -74,15 +87,13 @@ endif()
 install(TARGETS ${MODULE_SHARED_LIBRARY_NAME} ${MODULE_OBJECT_LIBRARY_NAME}
   EXPORT ${PROJECT_NAME}-targets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME} COMPONENT libs
-  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME} COMPONENT libs # ?? what is this ??
 )
 
 # install static lib
 if(BUILD_STATIC)
   install(TARGETS ${MODULE_STATIC_LIBRARY_NAME}
     EXPORT ${PROJECT_NAME}-targets
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME} COMPONENT libs
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME} COMPONENT libs # ?? what is this ??
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME} COMPONENT libs
   )
 endif()
 
