@@ -17,4 +17,5 @@ steps:
     echo Add other tasks to build, test, and deploy your project.
     echo See https://aka.ms/yaml
     ls -lah
+    pwd
   displayName: 'Run a multi-line script'
