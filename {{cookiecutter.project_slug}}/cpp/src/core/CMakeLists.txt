@@ -27,8 +27,7 @@ target_include_directories(${MODULE_OBJECT_LIBRARY_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR} # private includes go here
 )
 
-# shared libraries need PIC, if they are compile from the obj files, they also 
-# neet
+# shared libraries need PIC, if they are compile from the object files
 set_property(TARGET ${MODULE_OBJECT_LIBRARY_NAME}
   PROPERTY POSITION_INDEPENDENT_CODE ON
 )
@@ -90,7 +89,7 @@ endif()
 # https://gitlab.kitware.com/cmake/community/wikis/doc/tutorials/Object-Library
 
 # install shared lib
-install(TARGETS ${MODULE_SHARED_LIBRARY_NAME} ${MODULE_OBJECT_LIBRARY_NAME}
+install(TARGETS ${MODULE_SHARED_LIBRARY_NAME} ${MODULE_OBJECT_LIBRARY_NAME} # TODO: carify issue https://gitlab.kitware.com/cmake/cmake/issues/18935
   EXPORT ${PROJECT_NAME}-targets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME} COMPONENT libs
 )
