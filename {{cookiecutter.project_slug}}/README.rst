@@ -4,6 +4,12 @@
 
 {{ cookiecutter.description }}
 
+-------
+Summary
+-------
+
+{{ cookiecutter.long_description }}
+
 This project is a template from ``gh:practicalci/cookiecutter-cpp`` cookiecutter.
 For improvements and changes, please contact the coockiecuter author.
 

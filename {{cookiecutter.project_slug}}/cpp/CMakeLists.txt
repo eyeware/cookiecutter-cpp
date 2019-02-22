@@ -46,14 +46,12 @@ conan_cmake_run(CONANFILE conanfile.txt  # or relative build/conanfile.txt
                 BUILD missing)
 
 
-# Project directory structure for install
 include(CheckCXXCompilerFlag) # TODO: use new way
-
 include(CMakePackageConfigHelpers) # TODO:
 
 
 # Build flags
-set (CMAKE_CXX_STANDARD {{ cookiecutter.cpp_standard }}) # one of { 03, 11, 14 }
+set (CMAKE_CXX_STANDARD {{ cookiecutter.cpp_standard }}) # one of { 98, 11, 14 }
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Don't use non standard compiler extensions, for portability
