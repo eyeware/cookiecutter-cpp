@@ -20,8 +20,9 @@ option(BUILD_TESTS "Build project tests" ON) # TODO
 include(GNUInstallDirs)
 
 string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
-set(${PROJECT_NAME_UPPER}_INSTALL_INCLUDEDIR ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME})
-set(${PROJECT_NAME_UPPER}_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME})
+set(PROJECT_INCLUDEDIR ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME})
+set(PROJECT_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME})
+set(PROJECT_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
 
 # ------------------------------------------------------------------------------
 # Add external cmake modules to project.
