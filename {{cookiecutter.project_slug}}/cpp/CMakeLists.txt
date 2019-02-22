@@ -2,7 +2,7 @@
 # {{ cookiecutter.description }}
 # Copyright {{ cookiecutter.year }}, {{ cookiecutter.author }}
 
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.12)
 project({{ cookiecutter.project_slug }} VERSION {{ cookiecutter.version }} LANGUAGES C CXX)
 set(PROJECT_DESCRIPTION   "{{ cookiecutter.description }}")
 set(PROJECT_AUTHOR        "{{ cookiecutter.author }}")
@@ -10,13 +10,18 @@ set(PROJECT_URL           "https://{{ cookiecutter.git_server }}/{{ cookiecutter
 
 
 option(BUILD_STATIC "Build static libraries." OFF)
-option(BUILD_SWIG_BINDINGS "Build swig python bindings." ON)
-option(BUILD_PYBIND11_BINDINGS "Build pybind11 python bindings." ON)
+
+option(BUILD_PYTHON_PYBIND11 "Build pybind11 python bindings." ON)
+option(BUILD_PYTHON_SWIG "Build pybind11 python bindings." OFF)
 
 option(BUILD_DOC "Build code documentation using Doxygen." OFF)
 option(BUILD_TESTS "Build project tests" ON) # TODO
 
+include(GNUInstallDirs)
 
+string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
+set(${PROJECT_NAME_UPPER}_INSTALL_INCLUDEDIR ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME})
+set(${PROJECT_NAME_UPPER}_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME})
 
 # ------------------------------------------------------------------------------
 # Add external cmake modules to project.
@@ -42,7 +47,6 @@ conan_cmake_run(CONANFILE conanfile.txt  # or relative build/conanfile.txt
 
 # Project directory structure for install
 include(CheckCXXCompilerFlag) # TODO: use new way
-include(GNUInstallDirs)
 
 include(CMakePackageConfigHelpers) # TODO:
 
@@ -59,23 +63,36 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # module CMakeLists.
 add_library(${PROJECT_NAME} INTERFACE)
 
-if (BUILD_PYBIND11_BINDINGS)
+if(BUILD_PYTHON_PYBIND11 OR BUILD_PYTHON_SWIG)
+  if(NOT PYTHON_SITE_PACKAGES) # if not defined at build time, find it now
+    # https://cmake.org/cmake/help/v3.12/module/FindPython.html#module:FindPython
+    find_package(Python REQUIRED COMPONENTS Interpreter Development)
+
+    # Python_STDLIB # lib/python3.6 # Standard platform independent installation directory.
+    # Python_STDARCH # lib/python3.6 # Standard platform dependent installation directory.
+    # Python_SITELIB # lib/python3.6/site-packages # Third-party platform independent installation directory.
+    # Python_SITEARCH # lib/python3.6/site-packages # Third-party platform dependent installation directory. 
+
+    if(Python_SITEARCH)
+      set(PYTHON_SITE_PACKAGES ${Python_SITEARCH})
+    else()
+      message(FATAL_ERROR 
+        "Could not detect Python packages installation directory."
+      )
+    endif()
+
+  endif()
+
+  if (BUILD_PYTHON_PYBIND11)
     find_package(pybind11 REQUIRED)
 
-    # add target for all python modules
-    # NOTE: add target_link_libraries(python_bindings <module name>) in each
-    # module CMakeLists.
-    add_library(python_bindings INTERFACE) 
-endif()
+    add_library(python_pybind11 INTERFACE)
+  endif()
 
-if (BUILD_SWIG_BINDINGS)
-# TODO: clarify some issues.
-# # ommit python version, allow it to capture the one that is available
-#    find_package(Python REQUIRED) # TODO: check imported targets, new cmake
-#    include_directories(${PYTHON_INCLUDE_DIRS}) # TODO: don't do this, adding python include to all targers
-#    include_directories(${PYTHON_INCLUDE_PATH})
-#    include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-#    find_package(SWIG REQUIRED)
+  if(BUILD_PYTHON_SWIG)
+    find_package(Swig REQUIRED)
+    
+  endif()
 endif()
 
 # Enable only coverage in Debug mode
