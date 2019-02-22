@@ -1,8 +1,8 @@
 {
     "project_name": "rock",
     "project_slug": "{{ cookiecutter.project_name|lower|replace(' ', '_') }}",
-    "project_short_description": "A rock solid project",
-    "description": "A rock solid project with enforced style, testing and static analysis",
+    "description": "A rock solid project",
+    "long_description": "A rock solid project with enforced style, testing and static analysis",
     "version": "1.0.0",
     "organization": "",
     "author": "First Last",
