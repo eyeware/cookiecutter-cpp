@@ -6,7 +6,7 @@ import sys
 from skbuild import setup
 from setuptools import find_packages
 
-with open('README.rst') as readme_file:
+with open(os.path.join('..','README.rst')) as readme_file:
     readme = readme_file.read()
 
 requirements = [] # TODO: load from conda file.
@@ -30,7 +30,7 @@ setup(
     description='{{ cookiecutter.description }}',
     long_description=readme,
     author='{{ cookiecutter.author }}',
-    author_email='{{ cookiecutter.email }}'
+    author_email='{{ cookiecutter.email }}',
     license='{{ cookiecutter.open_source_license }}',
     packages=find_packages(exclude=['*.tests', '*.tests.*', 'tests.*', 'tests']),
     install_requires=requirements,

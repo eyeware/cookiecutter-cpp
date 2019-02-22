@@ -122,7 +122,7 @@ endif()
 # https://gitlab.kitware.com/cmake/community/wikis/doc/tutorials/Object-Library
 
 # install shared lib
-install(TARGETS ${MODULE_SHARED_LIBRARY_NAME} # ${MODULE_OBJECT_LIBRARY_NAME} # TODO: carify issue https://gitlab.kitware.com/cmake/cmake/issues/18935
+install(TARGETS ${MODULE_SHARED_LIBRARY_NAME} ${MODULE_OBJECT_LIBRARY_NAME} # TODO: carify issue https://gitlab.kitware.com/cmake/cmake/issues/18935
   EXPORT ${PROJECT_NAME}-targets
   LIBRARY DESTINATION ${MODULE_INSTALL_LIBDIR} COMPONENT libs
 )
