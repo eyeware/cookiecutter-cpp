@@ -63,7 +63,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_library(${PROJECT_NAME} INTERFACE)
 
 if(BUILD_PYTHON_PYBIND11 OR BUILD_PYTHON_SWIG)
-  if(NOT PYTHON_SITE_PACKAGES) # if not defined at build time, find it now
+  if(SKBUILD) # building with scikit-build
+    set(PYTHON_SITE_PACKAGES "")
+    message("Building for scikit-build.")
+  elseif(NOT PYTHON_SITE_PACKAGES) # if not defined at build time, find it now
     # https://cmake.org/cmake/help/v3.12/module/FindPython.html#module:FindPython
     find_package(Python REQUIRED COMPONENTS Interpreter Development)
 
@@ -75,11 +78,16 @@ if(BUILD_PYTHON_PYBIND11 OR BUILD_PYTHON_SWIG)
     if(Python_SITEARCH)
       set(PYTHON_SITE_PACKAGES ${Python_SITEARCH})
     else()
-      message(FATAL_ERROR 
-        "Could not detect Python packages installation directory."
+      message(WARNING 
+        "Could not detect Python packages installation directory and none was defined."
       )
     endif()
+  endif()
 
+  if(PYTHON_SITE_PACKAGES)
+    set(PROJECT_PYTHON_PACKAGE_INSTALL_DIR ${PYTHON_SITE_PACKAGES}/${PROJECT_NAME})
+  else()
+    set(PROJECT_PYTHON_PACKAGE_INSTALL_DIR ${PROJECT_NAME})
   endif()
 
   if (BUILD_PYTHON_PYBIND11)

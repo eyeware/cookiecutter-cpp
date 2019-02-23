@@ -40,7 +40,7 @@ setup(
     cmake_source_dir=os.path.join('..','cpp'),
     cmake_args=[
 
-        '-DBUILD_PYTHON_PYBIND11=ON', 
+        '-DBUILD_PYTHON_PYBIND11=ON',
 #        '-DBUILD_PYTHON_SWIG=ON',
 #        '-DBUILD_TESTS=ON',
 # to build for a conda environment please check the environment variables
