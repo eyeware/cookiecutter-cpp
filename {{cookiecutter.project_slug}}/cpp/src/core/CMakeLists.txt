@@ -19,7 +19,7 @@ set(MODULE_INSTALL_INCLUDEDIR ${PROJECT_INSTALL_INCLUDEDIR}/${MODULE_NAME})
 
 set(MODULE_INCLUDEDIR ${PROJECT_INCLUDEDIR}/${MODULE_NAME})
 
-option(ENABLE_${MODULE_NAME_UPPER}_MODULE_PYTHON_STATIC_LINK_LIBRARY 
+option(ENABLE_${MODULE_NAME_UPPER}_PYTHON_MODULE_STATIC_LINK
   "Link the python module with the static library." OFF)
 
 add_library(${MODULE_OBJECT_LIBRARY_NAME} OBJECT
@@ -46,7 +46,7 @@ set_property(TARGET ${MODULE_OBJECT_LIBRARY_NAME}
 add_library(${MODULE_SHARED_LIBRARY_NAME} SHARED)
 target_link_libraries(${MODULE_SHARED_LIBRARY_NAME} PUBLIC ${MODULE_OBJECT_LIBRARY_NAME})
 
-if(BUILD_STATIC OR ENABLE_${MODULE_NAME_UPPER}_MODULE_PYTHON_STATIC_LINK_LIBRARY)
+if(BUILD_STATIC OR ENABLE_${MODULE_NAME_UPPER}_PYTHON_MODULE_STATIC_LINK)
   add_library(${MODULE_STATIC_LIBRARY_NAME} STATIC)
   target_link_libraries(${MODULE_STATIC_LIBRARY_NAME} PUBLIC ${MODULE_OBJECT_LIBRARY_NAME})
 endif()
@@ -59,10 +59,11 @@ if (BUILD_PYTHON_PYBIND11)
   # SEE: https://github.com/pybind/python_example/issues/26
   set_target_properties(${MODULE_PYTHON_TARGET_NAME} PROPERTIES OUTPUT_NAME ${MODULE_PYTHON_NAME})
 
-  if(ENABLE_${MODULE_NAME_UPPER}_MODULE_PYTHON_STATIC_LINK_LIBRARY)
+  if(ENABLE_${MODULE_NAME_UPPER}_PYTHON_MODULE_STATIC_LINK)
     # NOTE: there is an issue with this aproach, if different python modules share
     # the same libs then it might break static like functionality in the libs, as 
-    # each module will be static linked with the python extension module.
+    # each module will be static linked with the python extension module, and
+    # some symbols might be undefined.
     target_link_libraries(${MODULE_PYTHON_TARGET_NAME} PRIVATE ${MODULE_STATIC_LIBRARY_NAME})
   else()
     target_link_libraries(${MODULE_PYTHON_TARGET_NAME} PRIVATE ${MODULE_SHARED_LIBRARY_NAME})
