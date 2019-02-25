@@ -8,7 +8,7 @@ if (DOXYGEN_FOUND)
                    ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)
 
     # Add the target to generate docs in the build directory
-    add_custom_target(${PROJECT_NAME}_doc
+    add_custom_target(docs
         COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMENT "Generating API documentation with Doxygen"

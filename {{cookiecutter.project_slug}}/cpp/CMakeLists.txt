@@ -17,6 +17,9 @@ option(BUILD_PYTHON_SWIG "Build pybind11 python bindings." OFF)
 option(BUILD_DOC "Build code documentation using Doxygen." OFF)
 option(BUILD_TESTS "Build project tests" ON) # TODO
 
+option(USE_PYTHON_INTEPERTER_SITE_PACKAGES 
+  "set PYTHON_SITE_PACKAGES using cmake Python package interperter Python_SITEARCH" ON)
+
 include(GNUInstallDirs)
 
 string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
@@ -63,10 +66,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_library(${PROJECT_NAME} INTERFACE)
 
 if(BUILD_PYTHON_PYBIND11 OR BUILD_PYTHON_SWIG)
-  if(SKBUILD) # building with scikit-build
-    set(PYTHON_SITE_PACKAGES "")
-    message("Building for scikit-build.")
-  elseif(NOT PYTHON_SITE_PACKAGES) # if not defined at build time, find it now
+  if(USE_PYTHON_INTEPERTER_SITE_PACKAGES) # if not defined at build time, find it now
     # https://cmake.org/cmake/help/v3.12/module/FindPython.html#module:FindPython
     find_package(Python REQUIRED COMPONENTS Interpreter Development)
 
@@ -134,10 +134,13 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug")
   # setup_target_for_coverage_gcovr_html(NAME coverage EXECUTABLE module1_test )
 endif()
 
-add_subdirectory(test)
+if(BUILD_TESTS)
+  add_subdirectory(tests)
+endif()
 
-add_subdirectory(doc)
-
+if(BUILD_DOC)
+  add_subdirectory(doc)
+endif()
 
 # install targets cmake file, previously registered targets in each module.
 install(EXPORT {{ cookiecutter.project_slug }}-targets
@@ -147,7 +150,27 @@ install(EXPORT {{ cookiecutter.project_slug }}-targets
     {{ cookiecutter.project_slug }}::
   DESTINATION
     ${CMAKE_INSTALL_LIBDIR}/cmake/{{ cookiecutter.project_slug }}
+  COMPONENT dev
 )
 
+# TODO: Install component targets, needs to be executed after the cmake build
+add_custom_target(install-lib
+#    DEPENDS # TODO: add interface libraries for targets ?
+    COMMAND 
+    "${CMAKE_COMMAND}" -DCMAKE_INSTALL_COMPONENT=dev
+    -P "${CMAKE_BINARY_DIR}/cmake_install.cmake"
+)
 
+add_custom_target(install-dev
+#    DEPENDS docs # TODO: add interface libraries for targets ?
+    COMMAND 
+    "${CMAKE_COMMAND}" -DCMAKE_INSTALL_COMPONENT=dev
+    -P "${CMAKE_BINARY_DIR}/cmake_install.cmake"
+)
+add_custom_target(install-python
+#    DEPENDS # TODO: add interface libraries for targets ?
+    COMMAND 
+    "${CMAKE_COMMAND}" -DCMAKE_INSTALL_COMPONENT=dev
+    -P "${CMAKE_BINARY_DIR}/cmake_install.cmake"
+)
 

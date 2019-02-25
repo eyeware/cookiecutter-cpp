@@ -73,23 +73,59 @@ Project Options
 +-------------------------------------------------+---------+-----------------------------------------------------+----------+
 | BUILD_PYTHON_PYBIND11                           | project | enable build of pybind11 python bindings            | OFF      |
 +-------------------------------------------------+---------+-----------------------------------------------------+----------+
-| BUILD_PYTHON_SWIG                               | project | enable build of pybind11 python bindings            | OFF      |
+| BUILD_PYTHON_SWIG                               | project | enable build of swig python bindings                | OFF      |
 +-------------------------------------------------+---------+-----------------------------------------------------+----------+
 | BUILD_DOC                                       | project | enable build of html docs                           | OFF      |
 +-------------------------------------------------+---------+-----------------------------------------------------+----------+
 | BUILD_TESTS                                     | project | enable build of project tests                       | ON       |
 +-------------------------------------------------+---------+-----------------------------------------------------+----------+
-| ENABLE_TEST_COVERAGE                            | project | enable coverage reports when executing tests        | ON       |
+| ENABLE_TEST_COVERAGE                            | project | enable coverage reports when executing tests        | ON(TODO:)|
 +-------------------------------------------------+---------+-----------------------------------------------------+----------+
-| ENABLE_${MODULE_NAME}_PYTHON_MODULE_STATIC_LINK | module  | enable linking the python bindings with the static  | ON       |
+| ENABLE_${MODULE_NAME}_PYTHON_MODULE_STATIC_LINK | module  | enable linking the python bindings with the static  | OFF      |
 |                                                 |         | lib of the module. For this option to work properly,|          |
 |                                                 |         | the module must me self contained, in some cases    |          |
 |                                                 |         | this might break functionality, such as static      |          |
 |                                                 |         | funtions on other modules...                        |          |
 +-------------------------------------------------+---------+-----------------------------------------------------+----------+
+| USE_PYTHON_INTEPERTER_SITE_PACKAGES             | project | set PYTHON_SITE_PACKAGES using cmake Python package | ON       |
+|                                                 |         | interperter Python_SITEARCH                         |          |
++-------------------------------------------------+---------+-----------------------------------------------------+----------+
+| PYTHON_SITE_PACKAGES                            | project | where to install the python bindings and files      | undefined|
++-------------------------------------------------+---------+-----------------------------------------------------+----------+
 
-1.
-2. 
+
+
+CMake Project Components
+------------------------
+
+1. libs - install shared libraries only
+2. dev  - install includes, cmake targets and docs
+3. python - install python bindings
+
+
+To install the components separetly we need to first build the project and then invoke cmake in the following way:
+Note: please check this `install cmake components (1)`_, `install cmake components (2)`_
+
+.. _`install cmake components (1)`: https://stackoverflow.com/questions/9190098/for-cmakes-install-command-what-can-the-component-argument-do
+.. _`install cmake components (2)`: https://stackoverflow.com/questions/21852817/cmake-how-to-create-alias-for-installing-different-targets/21853784#21853784
+
+
+::
+
+    add_custom_target(install-<component>
+        DEPENDS <list of targes>
+        COMMAND 
+        "${CMAKE_COMMAND}" -DCMAKE_INSTALL_COMPONENT=<component>
+        -P "${CMAKE_BINARY_DIR}/cmake_install.cmake"
+    )
+
+In the command line, e.g.
+
+::
+
+    cmake .. -DCOMPONENT=dev -DCMAKE_INSTALL_PREFIX=`pwd`/install -P ./cmake_install.cmake
+
+
 
 Module Options
 --------------
@@ -97,7 +133,7 @@ Module Options
 Output
 ------
 
-There are some instalation requirements that need to be addressed, namely locating libraries for linking.
+There are some instalation requirements that need to be addressed, namely locating libraries for linking and setting rpath linux, check in windows.
 
 There are several possible instalation use-cases:
 

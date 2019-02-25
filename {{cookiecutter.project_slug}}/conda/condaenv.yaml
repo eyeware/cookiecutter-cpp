@@ -4,6 +4,7 @@ channels:
   - defaults
 dependencies:
   - cookiecutter=1.6
+# --- C++ dependencies ---
 # - catch2=2.6
   - cmake=3.13
   - conan=1.12
@@ -12,5 +13,8 @@ dependencies:
   - bump2version=5.8
   - python=3.6
 # --- dev dependencies ---
-  - pybind11=2.2.4
-  - swig=3.0.12
+  - pybind11=2.2
+  - swig=3.0
+# --- python build requirements ---
+  - flake8=3.7
+  - coverage=4.5
