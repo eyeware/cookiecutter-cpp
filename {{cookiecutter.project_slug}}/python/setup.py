@@ -49,13 +49,12 @@ if os.environ.get('CONDA_BUILD') == '1': # if under conda build
     cmake_args += [
         '-DCMAKE_INSTALL_PREFIX={}'.format(os.environ['PREFIX']),
     ]
-elif os.environ.get(CONDA_PREFIX) and os.environ.get(CONDA_DEFAULT_ENV):
+elif os.environ.get('CONDA_PREFIX') and os.environ.get('CONDA_DEFAULT_ENV'):
     cmake_args += [
         '-DCMAKE_INSTALL_PREFIX={}'.format(os.environ['CONDA_PREFIX']),
-        '-DPYTHON_SITE_PACKAGES={}'.format(os.environ['CONDA_PREFIX']),
+        '-DUSE_PYTHON_INTEPERTER_SITE_PACKAGES=ON',
     ]
 
-$CONDA_PREFIX
 
 
 setup(
