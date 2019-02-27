@@ -64,7 +64,7 @@ setup(
     long_description=readme,
     author='{{ cookiecutter.author }}',
     author_email='{{ cookiecutter.email }}',
-    license='{{ cookiecutter.open_source_license }}',
+    license='{{ cookiecutter.license }}',
     packages=find_packages(exclude=['*.tests', '*.tests.*', 'tests.*', 'tests']),
     install_requires=requirements,
     tests_require=['pytest'],

@@ -1,4 +1,4 @@
-{% if cookiecutter.open_source_license == 'MIT' %}
+{% if cookiecutter.license == 'MIT' %}
 MIT License
 
 Copyright (c) {% now 'local', '%Y' %}, {% if cookiecutter.organization %}{{ cookiecutter.organization }}{% else %}{{ cookiecutter.author }} <{{ cookiecutter.email.split('@')[0] }} at {{ cookiecutter.email.split('@')[1]|replace('.', ' dot ') }}>{% endif %}
@@ -20,7 +20,7 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-{% elif cookiecutter.open_source_license == 'BSD-2-Clause' %}
+{% elif cookiecutter.license == 'BSD-2-Clause' %}
 BSD 2-Clause "Simplified" License
 
 Copyright (c) {% now 'local', '%Y' %}, {% if cookiecutter.organization %}{{ cookiecutter.organization }}{% else %}{{ cookiecutter.author }} <{{ cookiecutter.email.split('@')[0] }} at {{ cookiecutter.email.split('@')[1]|replace('.', ' dot ') }}>{% endif %}. All rights reserved.
@@ -46,7 +46,7 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-{% elif cookiecutter.open_source_license == 'BSD-3-Clause' %}
+{% elif cookiecutter.license == 'BSD-3-Clause' %}
 BSD 3-Clause "New" or "Revised" License
 
 Copyright (c) {% now 'local', '%Y' %}, {% if cookiecutter.organization %}{{ cookiecutter.organization }}{% else %}{{ cookiecutter.author }} <{{ cookiecutter.email.split('@')[0] }} at {{ cookiecutter.email.split('@')[1]|replace('.', ' dot ') }}>{% endif %}. All rights reserved.
@@ -76,7 +76,7 @@ SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
 CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
 OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-{% elif cookiecutter.open_source_license == 'Apache-2.0' %}
+{% elif cookiecutter.license == 'Apache-2.0' %}
 Apache License 2.0
 
 Copyright (c) {% now 'local', '%Y' %}, {% if cookiecutter.organization %}{{ cookiecutter.organization }}{% else %}{{ cookiecutter.author }} <{{ cookiecutter.email.split('@')[0] }} at {{ cookiecutter.email.split('@')[1]|replace('.', ' dot ') }}>{% endif %}. All rights reserved.
@@ -265,7 +265,7 @@ distributed under the License is distributed on an "AS IS" BASIS,
 WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
-{% elif cookiecutter.open_source_license == 'GPL-2.0-only' %}
+{% elif cookiecutter.license == 'GPL-2.0-only' %}
 GNU General Public License v2.0 only
 
 GNU GENERAL PUBLIC LICENSE
@@ -585,7 +585,7 @@ proprietary programs. If your program is a subroutine library, you may consider
 it more useful to permit linking proprietary applications with the library. If
 this is what you want to do, use the GNU Lesser General Public License instead
 of this License.
-{% elif cookiecutter.open_source_license == 'GPL-3.0-only' %}
+{% elif cookiecutter.license == 'GPL-3.0-only' %}
 GNU General Public License v3.0 only
 
 GNU GENERAL PUBLIC LICENSE
@@ -1167,7 +1167,7 @@ it more useful to permit linking proprietary applications with the library. If
 this is what you want to do, use the GNU Lesser General Public License instead
 of this License. But first, please read <https://www.gnu.org/
 licenses/why-not-lgpl.html>.
-{% elif cookiecutter.open_source_license == 'LGPL-2.1-only' %}
+{% elif cookiecutter.license == 'LGPL-2.1-only' %}
 GNU Lesser General Public License v2.1 only
 
 GNU LESSER GENERAL PUBLIC LICENSE
@@ -1639,7 +1639,7 @@ by James Random Hacker.
 <signature of Ty Coon>, 1 April 1990
 Ty Coon, President of Vice
 That's all there is to it!
-{% elif cookiecutter.open_source_license == 'LGPL-3.0-only' %}
+{% elif cookiecutter.license == 'LGPL-3.0-only' %}
 GNU Lesser General Public License v3.0 only
 
 GNU LESSER GENERAL PUBLIC LICENSE
@@ -1791,7 +1791,7 @@ If the Library as you received it specifies that a proxy can decide whether
 future versions of the GNU Lesser General Public License shall apply, that
 proxy's public statement of acceptance of any version is permanent
 authorization for you to choose that version for the Library.
-{% elif cookiecutter.open_source_license == 'Not licensed' %}
+{% elif cookiecutter.license == 'Not licensed' %}
 Copyright (c) {% now 'local', '%Y' %}, {% if cookiecutter.organization %}{{ cookiecutter.organization }}{% else %}{{ cookiecutter.author }} <{{ cookiecutter.email.split('@')[0] }} at {{ cookiecutter.email.split('@')[1]|replace('.', ' dot ') }}>{% endif %}
 
 Not licensed.

@@ -3,8 +3,9 @@
  *
  */
 
-#include "{{cookiecutter.project_slug}}/core/B.h"
+#include "{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/B.h"
 
+namespace {{cookiecutter.project_namespace}} {
 namespace {{cookiecutter.project_slug}} {
 namespace core {
 
@@ -41,3 +42,4 @@ const int B::get_private() const
 
 } // namespace core
 } // namespace {{cookiecutter.project_slug}}
+} // namespace {{cookiecutter.project_namespace}}

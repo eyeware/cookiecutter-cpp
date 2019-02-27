@@ -3,11 +3,12 @@
  *
  */
 
-#ifndef {{cookiecutter.project_slug | upper }}_D_H
-#define {{cookiecutter.project_slug | upper }}_D_H
+#ifndef {{cookiecutter.project_namespace | upper }}_{{cookiecutter.project_slug | upper }}_D_H
+#define {{cookiecutter.project_namespace | upper }}_{{cookiecutter.project_slug | upper }}_D_H
 
-#include "{{cookiecutter.project_slug}}/core/A.h"
+#include "{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/A.h"
 
+namespace {{cookiecutter.project_namespace}} {
 namespace {{cookiecutter.project_slug}} {
 namespace core {
 
@@ -31,5 +32,6 @@ namespace core {
 
 } // namespace core
 } // namespace {{cookiecutter.project_slug}}
+} // namespace {{cookiecutter.project_namespace}}
 
-#endif // {{cookiecutter.project_slug | upper }}_D_H
+#endif // {{cookiecutter.project_namespace | upper }}_{{cookiecutter.project_slug | upper }}_D_H

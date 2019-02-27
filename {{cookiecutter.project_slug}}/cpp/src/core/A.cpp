@@ -4,8 +4,9 @@
  */
 
 #include <string>
-#include "{{cookiecutter.project_slug}}/core/A.h"
+#include "{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/A.h"
 
+namespace {{cookiecutter.project_namespace}} {
 namespace {{cookiecutter.project_slug}} {
 namespace core {
 
@@ -75,3 +76,4 @@ const std::string get_name_of_other(const A& other)
 
 } // namespace core
 } // namespace {{cookiecutter.project_slug}}
+} // namespace {{cookiecutter.project_namespace}}

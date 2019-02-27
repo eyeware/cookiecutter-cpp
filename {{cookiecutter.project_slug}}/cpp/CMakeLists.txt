@@ -4,10 +4,10 @@
 
 cmake_minimum_required(VERSION 3.12)
 project({{ cookiecutter.project_slug }} VERSION {{ cookiecutter.version }} LANGUAGES C CXX)
-set(PROJECT_DESCRIPTION   "{{ cookiecutter.description }}")
-set(PROJECT_AUTHOR        "{{ cookiecutter.author }}")
-set(PROJECT_URL           "https://{{ cookiecutter.git_server }}/{{ cookiecutter.username }}/{{ cookiecutter.project_slug }}")
-
+set(PROJECT_DESCRIPTION "{{ cookiecutter.description }}")
+set(PROJECT_AUTHOR      "{{ cookiecutter.author }}")
+set(PROJECT_URL         "https://{{ cookiecutter.git_server }}/{{ cookiecutter.username }}/{{ cookiecutter.project_slug }}")
+set(PROJECT_NAMESPACE   "{{ cookiecutter.project_namespace }}")
 
 option(BUILD_STATIC "Build static libraries." OFF)
 
@@ -23,9 +23,11 @@ option(USE_PYTHON_INTEPERTER_SITE_PACKAGES
 include(GNUInstallDirs)
 
 string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
-set(PROJECT_INCLUDEDIR ${PROJECT_SOURCE_DIR}/include/${PROJECT_NAME})
-set(PROJECT_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME})
-set(PROJECT_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
+set(PROJECT_SUFFIX ${PROJECT_NAMESPACE}/${PROJECT_NAME})
+set(PROJECT_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_SUFFIX})
+set(PROJECT_INCLUDEDIR ${PROJECT_SOURCE_DIR}/include/${PROJECT_SUFFIX})
+
+set(PROJECT_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR}/${PROJECT_SUFFIX})
 
 # ------------------------------------------------------------------------------
 # Add external cmake modules to project.
@@ -84,10 +86,11 @@ if(BUILD_PYTHON_PYBIND11 OR BUILD_PYTHON_SWIG)
     endif()
   endif()
 
+  # TODO: an __init__.py file needs to be installed into ${PROJECT_NAMESPACE}.
   if(PYTHON_SITE_PACKAGES)
-    set(PROJECT_PYTHON_PACKAGE_INSTALL_DIR ${PYTHON_SITE_PACKAGES}/${PROJECT_NAME})
+    set(PROJECT_PYTHON_PACKAGE_INSTALL_DIR ${PYTHON_SITE_PACKAGES}/${PROJECT_NAMESPACE}/${PROJECT_NAME})
   else()
-    set(PROJECT_PYTHON_PACKAGE_INSTALL_DIR ${PROJECT_NAME})
+    set(PROJECT_PYTHON_PACKAGE_INSTALL_DIR ${PROJECT_NAMESPACE}/${PROJECT_NAME})
   endif()
 
   if (BUILD_PYTHON_PYBIND11)
@@ -154,7 +157,7 @@ install(EXPORT {{ cookiecutter.project_slug }}-targets
   NAMESPACE
     {{ cookiecutter.project_slug }}::
   DESTINATION
-    ${CMAKE_INSTALL_LIBDIR}/cmake/{{ cookiecutter.project_slug }}
+    ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAMESPACE}
   COMPONENT dev
 )
 
@@ -162,7 +165,7 @@ install(EXPORT {{ cookiecutter.project_slug }}-targets
 add_custom_target(install-lib
 #    DEPENDS # TODO: add interface libraries for targets ?
     COMMAND 
-    "${CMAKE_COMMAND}" -DCMAKE_INSTALL_COMPONENT=dev
+    "${CMAKE_COMMAND}" -DCMAKE_INSTALL_COMPONENT=lib
     -P "${CMAKE_BINARY_DIR}/cmake_install.cmake"
 )
 
@@ -175,7 +178,7 @@ add_custom_target(install-dev
 add_custom_target(install-python
 #    DEPENDS # TODO: add interface libraries for targets ?
     COMMAND 
-    "${CMAKE_COMMAND}" -DCMAKE_INSTALL_COMPONENT=dev
+    "${CMAKE_COMMAND}" -DCMAKE_INSTALL_COMPONENT=python
     -P "${CMAKE_BINARY_DIR}/cmake_install.cmake"
 )
 

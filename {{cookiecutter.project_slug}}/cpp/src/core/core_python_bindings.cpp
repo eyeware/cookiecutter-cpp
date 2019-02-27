@@ -7,10 +7,10 @@
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
 
-#include "rock/core/A.h"
-#include "rock/core/B.h"
-#include "rock/core/C.h"
-#include "rock/core/D.h"
+#include "{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/A.h"
+#include "{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/B.h"
+#include "{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/C.h"
+#include "{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/D.h"
 
 // add submodules: https://github.com/pybind/python_example/issues/26
 PYBIND11_MODULE(core, module)
@@ -18,7 +18,7 @@ PYBIND11_MODULE(core, module)
     module.doc() = "C++ python bindings generated with pybind11";
     module.attr("__name__") = "mymodule.foo";
 
-    using namespace rock::core;
+    using namespace {{cookiecutter.project_namespace}}::{{cookiecutter.project_slug}}::core;
 
     py::class_<A>(module, "A")
         // constructors

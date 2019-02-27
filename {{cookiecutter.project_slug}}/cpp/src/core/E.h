@@ -3,13 +3,14 @@
  *
  */
 
-#ifndef {{cookiecutter.project_slug | upper }}_E_H
-#define {{cookiecutter.project_slug | upper }}_E_H
+#ifndef {{cookiecutter.project_namespace | upper }}_{{cookiecutter.project_slug | upper }}_E_H
+#define {{cookiecutter.project_namespace | upper }}_{{cookiecutter.project_slug | upper }}_E_H
 
 #include <string>
 
 // This is a private class, it is not exposed to the public API of the project.
 
+namespace {{cookiecutter.project_namespace}} {
 namespace {{cookiecutter.project_slug}} {
 namespace core {
 namespace detail {
@@ -31,5 +32,6 @@ namespace detail {
 } // namespace detail
 } // namespace core
 } // namespace {{cookiecutter.project_slug}}
+} // namespace {{cookiecutter.project_namespace}}
 
-#endif // {{cookiecutter.project_slug | upper }}_E_H
+#endif // {{cookiecutter.project_namespace | upper }}_{{cookiecutter.project_slug | upper }}_E_H

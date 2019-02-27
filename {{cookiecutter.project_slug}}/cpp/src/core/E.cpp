@@ -5,7 +5,9 @@
 
 #include "E.h"
 
+namespace {{cookiecutter.project_namespace}} {
 namespace {{cookiecutter.project_slug}} {
+
 namespace core {
 namespace detail {
 
@@ -31,3 +33,4 @@ const std::string E::get_name() const
 } // namespace detail
 } // namespace core
 } // namespace {{cookiecutter.project_slug}}
+} // namespace {{cookiecutter.project_namespace}}
