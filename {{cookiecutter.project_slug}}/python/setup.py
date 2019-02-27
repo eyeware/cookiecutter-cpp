@@ -3,7 +3,7 @@
 import os
 import sys
 
-from skbuild import setup
+
 from setuptools import find_packages
 
 with open(os.path.join('..','README.rst')) as readme_file:

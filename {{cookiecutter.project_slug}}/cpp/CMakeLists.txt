@@ -117,7 +117,12 @@ endif()
 # ------------------------------------------------------------------------------
 # Add project modules here
 # ------------------------------------------------------------------------------
+
+# functions to add modules and just invoking a function
+include(PracticalCIProject)
+
 add_subdirectory(src/core)
+
 # add_subdirectory(src/module1)
 
 
