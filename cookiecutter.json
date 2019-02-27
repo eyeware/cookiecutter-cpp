@@ -11,6 +11,7 @@
     "open_source_license": ["MIT", "BSD-2-Clause", "BSD-3-Clause", "Apache-2.0", "GPL-2.0-only", "GPL-3.0-only", "LGPL-2.1-only", "LGPL-3.0-only", "Not licensed"],
     "check_style": true,
     "cpp_standard": ["11","14","98"],
+    "project_namespace": "{{ cookiecutter.organization|first|lower }}",
     "git_server": ["bitbucket.org", "github.com"],
     "username": "{{ cookiecutter.author|first|lower }}{{ cookiecutter.author.split()|last|lower }}",
     "branch": "master",
