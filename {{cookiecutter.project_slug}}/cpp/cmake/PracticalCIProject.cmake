@@ -2,9 +2,14 @@
 #
 # \param: SOURCES <list of source files in the module> 
 # \param: INTERFACE <list of public API includes>
-#
+# 
+# practci_add_cpp_module(SOURCES <source files> 
+#                        INTERFACE_HEADERS <public header files> 
+#                        MODULE_LINK_LIBRARIES <PRIVATE|PUBLIC|INTERFACE> <lib>
 function(practci_add_cpp_module)
-    set(MULTI_VALUE_ARGS SOURCES INTERFACE)
+    set(MULTI_VALUE_ARGS SOURCES INTERFACE_HEADERS 
+        PUBLIC_LINK_LIBRARIES INTERFACE_LINK_LIBRARIES PRIVATE_LINK_LIBRARIES 
+    )
 
     cmake_parse_arguments(MODULE "" "" "${MULTI_VALUE_ARGS}" ${ARGN})
 
@@ -43,6 +48,12 @@ function(practci_add_cpp_module)
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> # project public includes
       PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR} # private includes go here
+    )
+
+    target_link_libraries(${MODULE_OBJECT_LIBRARY_NAME} 
+        INTERFACE ${MODULE_INTERFACE_LINK_LIBRARIES}
+        PUBLIC ${MODULE_PUBLIC_LINK_LIBRARIES}
+        PRIVATE ${MODULE_PRIVATE_LINK_LIBRARIES}
     )
 
     # shared libraries need PIC, if they are compile from the object files
