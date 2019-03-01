@@ -1,4 +1,4 @@
-#include "catch.hpp"
+#include "catch2/catch.hpp"
 
 #include "{{cookiecutter.project_namespace}}/{{ cookiecutter.project_slug }}/core/A.h"
 #include "{{cookiecutter.project_namespace}}/{{ cookiecutter.project_slug }}/core/B.h"

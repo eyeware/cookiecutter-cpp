@@ -1,4 +1,9 @@
 
+
+message(WARNING "setting cmake policy CMP0079 NEW, required for the project structure.")
+
+cmake_policy(SET CMP0079 NEW)
+
 #
 # \param: SOURCES <list of source files in the module> 
 # \param: INTERFACE <list of public API includes>
@@ -107,7 +112,6 @@ function(practci_add_cpp_module)
         # library
         if(DEFINED ENV{CONDA_PREFIX})
             message("Computing rpath for conda environment, name: $ENV{CONDA_DEFAULT_ENV}, path:$ENV{CONDA_PREFIX}")
-            # ${CMAKE_INSTALL_LIBDIR}/${PROJECT_NAME} # TODO: refactor this and use PROJECT_INSTALL_LIBDIR or ${PROJECT_NAME_UPPER}_INSTALL_LIBDIR
 
             set(MODULE_PYTHON_INSTALL_RPATH ${CMAKE_INSTALL_PREFIX}/${MODULE_INSTALL_LIBDIR})
             set(MODULE_PYTHON_BUILD_RPATH ${CMAKE_BINARY_DIR}/${MODULE_INSTALL_LIBDIR})
@@ -156,16 +160,39 @@ function(practci_add_cpp_module)
       )
     endif()
 
-    set(MODULE_INTERFACE_FILES "")
-
-    foreach(INTERFACE_FILE ${MODULE_INTERFACE})
-        list(APPEND MODULE_INTERFACE_FILES "${MODULE_INCLUDEDIR}/${INTERFACE_FILE}")
-    endforeach()
+    list(TRANSFORM MODULE_INTERFACE_HEADERS PREPEND ${MODULE_INCLUDEDIR}/)
 
     # install module header files
-    install(FILES ${MODULE_INTERFACE_FILES}
+    install(FILES ${MODULE_INTERFACE_HEADERS}
       DESTINATION ${MODULE_INSTALL_INCLUDEDIR}
       COMPONENT dev
     )
 
 endfunction(practci_add_cpp_module)
+
+# Add module tests here
+
+# practci_add_cpp_test() no additional test files for the module.
+# practci_add_cpp_test(SOURCES <source file>...)
+function(practci_add_cpp_test)
+  set(MULTI_VALUE_ARGS SOURCES)
+
+  cmake_parse_arguments(MODULE "" "" "${MULTI_VALUE_ARGS}" ${ARGN})
+
+  # the module name is assumed to be the current directory name
+  # the module must be under src/<module_name>
+  get_filename_component(MODULE_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
+
+  list(INSERT MODULE_SOURCES 0 "test_${MODULE_NAME}.cpp")
+
+  list(TRANSFORM MODULE_SOURCES PREPEND ${CMAKE_CURRENT_SOURCE_DIR}/)
+
+  # NOTE: use the prefix ${CMAKE_CURRENT_SOURCE_DIR} when adding source files
+  # otherwise they might not be found where you include the target.
+  target_sources(${PROJECT_TEST_TARGET} PRIVATE ${MODULE_SOURCES})
+
+  # link the module to the project test target
+  target_link_libraries(${PROJECT_TEST_TARGET} PRIVATE ${MODULE_NAME})
+
+endfunction(practci_add_cpp_test)
+

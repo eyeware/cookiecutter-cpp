@@ -1,7 +1,5 @@
-# Add module tests here
 
-# NOTE: use the prefix ${CMAKE_CURRENT_SOURCE_DIR} when adding source files
-# otherwise they might not be found where you include the target.
-target_sources(${PROJECT_NAME}_test PRIVATE 
-  ${CMAKE_CURRENT_SOURCE_DIR}/test_core.cpp
-)
+# use `practci_add_cpp_test(SOURCES test_...cpp ...)
+# if the module has the tests, split into several source files.
+# note test_<module_name>.cpp is assume to exist allways.
+practci_add_cpp_test()

@@ -15,7 +15,7 @@ option(BUILD_PYTHON_PYBIND11 "Build pybind11 python bindings." ON)
 option(BUILD_PYTHON_SWIG "Build pybind11 python bindings." OFF)
 
 option(BUILD_DOC "Build code documentation using Doxygen." OFF)
-option(BUILD_TESTS "Build project tests" ON) # TODO
+option(BUILD_TESTS "Build project tests" ON)
 
 option(USE_PYTHON_INTEPERTER_SITE_PACKAGES 
   "set PYTHON_SITE_PACKAGES using cmake Python package interperter Python_SITEARCH" ON)
@@ -29,6 +29,8 @@ set(PROJECT_INCLUDEDIR ${PROJECT_SOURCE_DIR}/include/${PROJECT_SUFFIX})
 
 set(PROJECT_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR}/${PROJECT_SUFFIX})
 
+set(PROJECT_TEST_TARGET test_${PROJECT_NAME})
+
 # ------------------------------------------------------------------------------
 # Add external cmake modules to project.
 # Add find_<package_name> files to cmake-modules directory.
@@ -37,23 +39,9 @@ set(PROJECT_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR}/${PROJECT_SUFFIX})
 # Make sure that our modules are captured first.
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake)
 
-# Installing conan dependencies
-if(NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
-   message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-   file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/v0.13/conan.cmake"
-                 "${CMAKE_BINARY_DIR}/conan.cmake")
-endif()
-
-include(${CMAKE_BINARY_DIR}/conan.cmake)
-
-conan_cmake_run(CONANFILE conanfile.txt  # or relative build/conanfile.txt
-                BASIC_SETUP CMAKE_TARGETS
-                BUILD missing)
-
 
 include(CheckCXXCompilerFlag) # TODO: use new way
 include(CMakePackageConfigHelpers) # TODO:
-
 
 # Build flags
 set (CMAKE_CXX_STANDARD {{ cookiecutter.cpp_standard }}) # one of { 98, 11, 14 }
@@ -105,8 +93,8 @@ if(BUILD_PYTHON_PYBIND11 OR BUILD_PYTHON_SWIG)
   endif()
 endif()
 
-# Enable only coverage in Debug mode
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+# Enable only coverage in Debug mode and tests are enabled
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND BUILD_TESTS)
   include(CodeCoverage)
   append_coverage_compiler_flags()
 endif()
@@ -133,17 +121,58 @@ add_subdirectory(src/core)
 # Setup tests and checks
 # ------------------------------------------------------------------------------
 
-enable_testing()
-
-# Enable only coverage in Debug mode, avoid adding debug symbols for Release mode.
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-  # TODO: check per test coverage or coverage all tests.
-  setup_target_for_coverage_gcovr_html(NAME coverage EXECUTABLE core_test )
-  # setup_target_for_coverage_gcovr_html(NAME coverage EXECUTABLE module1_test )
-endif()
-
 if(BUILD_TESTS)
-  add_subdirectory(tests)
+ 
+  find_package(Catch2 2.6 REQUIRED)
+
+  enable_testing()
+
+  # Enable only coverage in Debug mode, avoid adding debug symbols for Release mode.
+  if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    # TODO: check per test coverage or coverage all tests.
+    setup_target_for_coverage_gcovr_html(NAME coverage EXECUTABLE ${PROJECT_TEST_TARGET})
+    # setup_target_for_coverage_gcovr_html(NAME coverage EXECUTABLE module1_test )
+  endif()
+
+
+  # Add here additional source files
+  add_executable(${PROJECT_TEST_TARGET} 
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/${PROJECT_TEST_TARGET}.cpp
+  )
+
+  # make sure you execute "conan install .." in the build directory
+  target_link_libraries(${PROJECT_TEST_TARGET} PRIVATE Catch2::Catch2)
+
+  # Register the tests
+  # TODO: check about registering test names to filter the tests
+  # check CTest
+  # add_test(NAME ${PROJECT_NAME}_test COMMAND ${PROJECT_NAME}_test)
+
+  # there is no way for ctest to display test output on failure from whithim cmake
+  # so add this custom command.
+  # SEE: 
+  # https://stackoverflow.com/a/36729074/3978614
+  # https://stackoverflow.com/a/31124523/3978614
+  add_custom_target(check_tests 
+      ${CMAKE_COMMAND} -E echo CWD=${CMAKE_BINARY_DIR}
+      COMMAND ${CMAKE_COMMAND} -E echo CMD=${CMAKE_CTEST_COMMAND} -C $<CONFIG>
+      COMMAND ${CMAKE_COMMAND} -E echo ----------------------------------
+      COMMAND ${CMAKE_COMMAND} -E env CTEST_OUTPUT_ON_FAILURE=1
+          ${CMAKE_CTEST_COMMAND} -C $<CONFIG> 
+          WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+          DEPENDS ${PROJECT_TEST_TARGET}
+  )
+
+# ------------------------------------------------------------------------------
+# Add project module tests
+# ------------------------------------------------------------------------------
+  
+  add_subdirectory(tests/core)
+
+  include(ParseAndAddCatchTests)
+  ParseAndAddCatchTests(${PROJECT_TEST_TARGET})
+
+  
 endif()
 
 if(BUILD_DOC)
