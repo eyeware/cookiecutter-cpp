@@ -8,6 +8,9 @@ Those convensions will apply and be reflected in python package structure and C+
 .. _swig: http://www.swig.org/
 .. _pybind11: https://pybind11.readthedocs.io/en/stable/
 
+.. sectnum::
+.. contents:: Table of Contents
+
 
 Project Structure
 =================
@@ -64,6 +67,7 @@ Project Structure
     
 
 Cookiecutter options
+--------------------
 
 +---------------+---------------------+------------------------------------------------+----------------------------------------------------+
 | context       | parameter           | Description                                    | defaults                                           |
@@ -138,9 +142,6 @@ Project Options
 |                                                 |         | this might break functionality, such as static      |          |
 |                                                 |         | funtions on other modules...                        |          |
 +-------------------------------------------------+---------+-----------------------------------------------------+----------+
-| USE_PYTHON_INTEPERTER_SITE_PACKAGES             | project | set PYTHON_SITE_PACKAGES using cmake Python package | ON       |
-|                                                 |         | interperter Python_SITEARCH                         |          |
-+-------------------------------------------------+---------+-----------------------------------------------------+----------+
 | PYTHON_SITE_PACKAGES                            | project | where to install the python bindings and files      | undefined|
 +-------------------------------------------------+---------+-----------------------------------------------------+----------+
 
@@ -176,7 +177,30 @@ In the command line, e.g.
 
     cmake .. -DCOMPONENT=dev -DCMAKE_INSTALL_PREFIX=`pwd`/install -P ./cmake_install.cmake
 
+CMake Project Install
+---------------------
 
+This project can be broken and installed in several ways:
+
+1. Linux (system install) packages
+
+    1. C++ Library only (shared libs)
+    2. C++ Development (includes, cmake targets, and docs)
+    3. Python (python bindings)
+
+3. Conda packages
+
+    1. C++ Library only (shared libs)
+    2. C++ Development (includes, cmake targets, and docs)
+    3. Python (python bindings)
+
+2. Python packages
+
+    1. Python wheel package, check `Wheel vs Egg`_ and `scikit-build` cmake integration.
+
+
+:: _`Wheel vs Egg`: https://packaging.python.org/discussions/wheel-vs-egg/
+:: _`scikit-build` : https://scikit-build.readthedocs.io/en/latest/
 
 Module Options
 --------------

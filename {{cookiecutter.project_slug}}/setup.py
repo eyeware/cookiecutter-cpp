@@ -4,6 +4,7 @@ import os
 import sys
 
 
+from skbuild import setup
 from setuptools import find_packages
 
 with open(os.path.join('..','README.rst')) as readme_file:
@@ -43,6 +44,7 @@ setup_requires = pytest_runner
 cmake_args = [
     '-DBUILD_PYTHON_PYBIND11=ON',
 #    '-DBUILD_PYTHON_SWIG=ON',
+    '-DINSTALL_FOR_PYPI=ON',
 ]
 
 if os.environ.get('CONDA_BUILD') == '1': # if under conda build
@@ -55,23 +57,24 @@ elif os.environ.get('CONDA_PREFIX') and os.environ.get('CONDA_DEFAULT_ENV'):
         '-DUSE_PYTHON_INTEPERTER_SITE_PACKAGES=ON',
     ]
 
-
-
+# see namespace packages https://packaging.python.org/guides/packaging-namespace-packages/#native-namespace-packages
 setup(
-    name='{{ cookiecutter.project_slug }}',
+    name='{{ cookiecutter.project_namespace }}-{{ cookiecutter.project_slug }}',
     version='{{ cookiecutter.version }}',
     description='{{ cookiecutter.description }}',
     long_description=readme,
     author='{{ cookiecutter.author }}',
     author_email='{{ cookiecutter.email }}',
     license='{{ cookiecutter.license }}',
-    packages=find_packages(exclude=['*.tests', '*.tests.*', 'tests.*', 'tests']),
+    package_dir = {'': os.path.join('src','python')},
+    packages=['{{ cookiecutter.project_namespace }}.{{ cookiecutter.project_slug }}'],
     install_requires=requirements,
     tests_require=['pytest'],
     setup_requires=setup_requires,
-    test_suite='tests',
-    cmake_source_dir=os.path.join('..','cpp'),
+    test_suite='tests.python',
+#    cmake_source_dir=os.path.join('..','cpp'),
     cmake_args=cmake_args,
+    cmake_minimum_required_version='3.12',
 
 #[
 #

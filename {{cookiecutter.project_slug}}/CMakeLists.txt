@@ -112,9 +112,7 @@ endif()
 # functions to add modules and just invoking a function
 include(PracticalCIProject)
 
-add_subdirectory(src/core)
-
-# add_subdirectory(src/module1)
+add_subdirectory(src/cpp/core)
 
 
 # ------------------------------------------------------------------------------
@@ -167,7 +165,7 @@ if(BUILD_TESTS)
 # Add project module tests
 # ------------------------------------------------------------------------------
   
-  add_subdirectory(tests/core)
+  add_subdirectory(tests/cpp/core)
 
   include(ParseAndAddCatchTests)
   ParseAndAddCatchTests(${PROJECT_TEST_TARGET})

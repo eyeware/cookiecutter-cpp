@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Tests for `{{ cookiecutter.project_slug }}` package."""
+"""Tests for `{{ cookiecutter.project_namespace }}.{{ cookiecutter.project_slug }}.core` module."""
 
 import unittest
 
-from {{ cookiecutter.project_slug }} import core 
+from {{ cookiecutter.project_namespace }}.{{ cookiecutter.project_slug }} import core 
 
 class TestCore(unittest.TestCase):
     """Tests for `{{ cookiecutter.project_slug }}` package."""

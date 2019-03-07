@@ -16,7 +16,7 @@ namespace py = pybind11;
 PYBIND11_MODULE(core, module)
 {
     module.doc() = "C++ python bindings generated with pybind11";
-    module.attr("__name__") = "mymodule.foo";
+    module.attr("__name__") = "core";
 
     using namespace {{cookiecutter.project_namespace}}::{{cookiecutter.project_slug}}::core;
 
