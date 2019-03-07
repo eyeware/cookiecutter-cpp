@@ -72,7 +72,6 @@ setup(
     tests_require=['pytest'],
     setup_requires=setup_requires,
     test_suite='tests.python',
-#    cmake_source_dir=os.path.join('..','cpp'),
     cmake_args=cmake_args,
     cmake_minimum_required_version='3.12',
 
