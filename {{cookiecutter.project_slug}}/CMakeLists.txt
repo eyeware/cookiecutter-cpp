@@ -17,19 +17,8 @@ option(BUILD_PYTHON_SWIG "Build pybind11 python bindings." OFF)
 option(BUILD_DOC "Build code documentation using Doxygen." OFF)
 option(BUILD_TESTS "Build project tests" ON)
 
-option(USE_PYTHON_INTEPERTER_SITE_PACKAGES 
-  "set PYTHON_SITE_PACKAGES using cmake Python package interperter Python_SITEARCH" ON)
-
-include(GNUInstallDirs)
-
-string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
-set(PROJECT_SUFFIX ${PROJECT_NAMESPACE}/${PROJECT_NAME})
-set(PROJECT_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_SUFFIX})
-set(PROJECT_INCLUDEDIR ${PROJECT_SOURCE_DIR}/include/${PROJECT_SUFFIX})
-
-set(PROJECT_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR}/${PROJECT_SUFFIX})
-
-set(PROJECT_TEST_TARGET test_${PROJECT_NAME})
+# INSTALL_FOR_PYPI means that the libs go under the package
+option(INSTALL_FOR_PYPI "Install libraries and python bindings inside the python package." OFF)
 
 # ------------------------------------------------------------------------------
 # Add external cmake modules to project.
@@ -38,6 +27,16 @@ set(PROJECT_TEST_TARGET test_${PROJECT_NAME})
 
 # Make sure that our modules are captured first.
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake)
+
+include(GNUInstallDirs)
+
+
+string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
+set(PROJECT_PREFIX ${PROJECT_NAMESPACE}/${PROJECT_NAME})
+set(PROJECT_INCLUDEDIR ${PROJECT_SOURCE_DIR}/include/${PROJECT_PREFIX})
+
+
+set(PROJECT_TEST_TARGET test_${PROJECT_NAME})
 
 
 include(CheckCXXCompilerFlag) # TODO: use new way
@@ -56,30 +55,74 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 add_library(${PROJECT_NAME} INTERFACE)
 
 if(BUILD_PYTHON_PYBIND11 OR BUILD_PYTHON_SWIG)
-  if(USE_PYTHON_INTEPERTER_SITE_PACKAGES) # if not defined at build time, find it now
-    # https://cmake.org/cmake/help/v3.12/module/FindPython.html#module:FindPython
-    find_package(Python REQUIRED COMPONENTS Interpreter Development)
 
-    # Python_STDLIB # lib/python3.6 # Standard platform independent installation directory.
-    # Python_STDARCH # lib/python3.6 # Standard platform dependent installation directory.
-    # Python_SITELIB # lib/python3.6/site-packages # Third-party platform independent installation directory.
-    # Python_SITEARCH # lib/python3.6/site-packages # Third-party platform dependent installation directory. 
+  # multi value options, see https://stackoverflow.com/a/47612735/3978614
 
-    if(Python_SITEARCH)
-      set(PYTHON_SITE_PACKAGES ${Python_SITEARCH})
-    else()
-      message(WARNING 
-        "Could not detect Python packages installation directory and none was defined."
-      )
+
+  find_package(Python REQUIRED COMPONENTS Interpreter Development)
+  # Python_STDLIB # Standard platform independent installation directory.
+  # Python_STDARCH # Standard platform dependent installation directory.
+  # Python_SITELIB # Third-party platform independent installation directory.
+  # Python_SITEARCH # Third-party platform dependent installation directory. 
+
+  # conda environment python
+  # Python_STDLIB: $CONDA_PREFIX/lib/python3.6
+  # Python_STDARCH: $CONDA_PREFIX/lib/python3.6
+  # Python_SITELIB: $CONDA_PREFIX/lib/python3.6/site-packages
+  # Python_SITEARCH: $CONDA_PREFIX/lib/python3.6/site-packages
+
+  # ubuntu 16.04 system python
+  # Python_STDLIB: /usr/lib/python3.5
+  # Python_STDARCH: /usr/lib/python3.5
+  # Python_SITELIB: /usr/lib/python3/dist-packages
+  # Python_SITEARCH: /usr/lib/python3/dist-packages
+
+  # compute the python instalation prefix.
+  if(Python_FOUND)
+    if(NOT CMAKE_INSTALL_PYTHON_STDLIB)
+      string(REGEX MATCH "python([0-9]|\.)+.*$" CMAKE_INSTALL_PYTHON_STDLIB ${Python_STDLIB})
+      message("CMAKE_INSTALL_PYTHON_STDLIB: ${CMAKE_INSTALL_PYTHON_STDLIB}")
+    endif()
+
+    if(NOT CMAKE_INSTALL_PYTHON_STDARCH)
+      string(REGEX MATCH "python([0-9]|\.)+.*$" CMAKE_INSTALL_PYTHON_STDARCH ${Python_STDARCH})
+      message("CMAKE_INSTALL_PYTHON_STDARCH: ${CMAKE_INSTALL_PYTHON_STDARCH}")
+    endif()
+
+    if(NOT CMAKE_INSTALL_PYTHON_SITELIB)
+      string(REGEX MATCH "python([0-9]|\.)+.*$" CMAKE_INSTALL_PYTHON_SITELIB ${Python_SITELIB})
+      message("CMAKE_INSTALL_PYTHON_SITELIB: ${CMAKE_INSTALL_PYTHON_SITELIB}")
+    endif()
+
+    if(NOT CMAKE_INSTALL_PYTHON_SITEARCH)
+      string(REGEX MATCH "python([0-9]|\.)+.*$" CMAKE_INSTALL_PYTHON_SITEARCH ${Python_SITEARCH})
+      message("CMAKE_INSTALL_PYTHON_SITEARCH: ${CMAKE_INSTALL_PYTHON_SITEARCH}")
     endif()
   endif()
 
-  # TODO: an __init__.py file needs to be installed into ${PROJECT_NAMESPACE}.
-  if(PYTHON_SITE_PACKAGES)
-    set(PROJECT_PYTHON_PACKAGE_INSTALL_DIR ${PYTHON_SITE_PACKAGES}/${PROJECT_NAMESPACE}/${PROJECT_NAME})
-  else()
-    set(PROJECT_PYTHON_PACKAGE_INSTALL_DIR ${PROJECT_NAMESPACE}/${PROJECT_NAME})
+  # default setup of the project instalation folders
+  set(PROJECT_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_PREFIX})
+  set(PROJECT_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR}/${PROJECT_PREFIX})
+  set(PROJECT_INSTALL_PYTHON_SITEARCH ${CMAKE_INSTALL_LIBDIR}/${CMAKE_INSTALL_PYTHON_SITEARCH}/${PROJECT_PREFIX})
+
+  if(INSTALL_FOR_PYPI)
+    # if Pypi, then python packages go under 
+    # <package_name>
+    # and libs go under 
+    # <package_name>/lib
+
+    if(SKBUILD) # build by python integrating with scikit-build
+      set(PROJECT_INSTALL_PYTHON_SITEARCH ${PROJECT_PREFIX})
+    else() # install in current python environment
+      set(PROJECT_INSTALL_PYTHON_SITEARCH ${CMAKE_INSTALL_PYTHON_SITEARCH}/${PROJECT_PREFIX})
+    endif()
+
+    set(PROJECT_INSTALL_LIBDIR ${PROJECT_INSTALL_PYTHON_SITEARCH}/${CMAKE_INSTALL_LIBDIR}/${PROJECT_PREFIX})
   endif()
+
+  message("PROJECT_INSTALL_PYTHON_PACKAGE_MODE:${PROJECT_INSTALL_PYTHON_PACKAGE_MODE}")
+  message("PROJECT_INSTALL_PYTHON_SITEARCH:${PROJECT_INSTALL_PYTHON_SITEARCH}")
+  message("PROJECT_INSTALL_LIBDIR:${PROJECT_INSTALL_LIBDIR}")
 
   if (BUILD_PYTHON_PYBIND11)
     find_package(pybind11 REQUIRED)
@@ -89,7 +132,6 @@ if(BUILD_PYTHON_PYBIND11 OR BUILD_PYTHON_SWIG)
 
   if(BUILD_PYTHON_SWIG)
     find_package(Swig REQUIRED)
-    
   endif()
 endif()
 
@@ -135,7 +177,7 @@ if(BUILD_TESTS)
 
   # Add here additional source files
   add_executable(${PROJECT_TEST_TARGET} 
-    ${CMAKE_CURRENT_SOURCE_DIR}/tests/${PROJECT_TEST_TARGET}.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests/cpp/${PROJECT_TEST_TARGET}.cpp
   )
 
   # make sure you execute "conan install .." in the build directory
@@ -161,9 +203,9 @@ if(BUILD_TESTS)
           DEPENDS ${PROJECT_TEST_TARGET}
   )
 
-# ------------------------------------------------------------------------------
-# Add project module tests
-# ------------------------------------------------------------------------------
+  # ----------------------------------------------------------------------------
+  # Add project module tests
+  # ----------------------------------------------------------------------------
   
   add_subdirectory(tests/cpp/core)
 
@@ -173,39 +215,47 @@ if(BUILD_TESTS)
   
 endif()
 
-if(BUILD_DOC)
+if(BUILD_DOC AND NOT INSTALL_FOR_PYPI)
   add_subdirectory(doc)
 endif()
 
+if(NOT INSTALL_FOR_PYPI)
 # install targets cmake file, previously registered targets in each module.
-install(EXPORT {{ cookiecutter.project_slug }}-targets
+install(EXPORT ${PROJECT_NAME}-targets
   FILE
-    {{ cookiecutter.project_slug }}Targets.cmake
+    ${PROJECT_NAME}Targets.cmake
   NAMESPACE
-    {{ cookiecutter.project_slug }}::
+    ${PROJECT_NAMESPACE}_${PROJECT_NAME}::
   DESTINATION
     ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAMESPACE}
   COMPONENT dev
 )
+endif()
 
 # TODO: Install component targets, needs to be executed after the cmake build
 add_custom_target(install-lib
 #    DEPENDS # TODO: add interface libraries for targets ?
-    COMMAND 
+  COMMAND 
     "${CMAKE_COMMAND}" -DCMAKE_INSTALL_COMPONENT=lib
     -P "${CMAKE_BINARY_DIR}/cmake_install.cmake"
+  WORKING_DIRECTORY
+    ${CMAKE_BINARY_DIR}
 )
 
 add_custom_target(install-dev
 #    DEPENDS docs # TODO: add interface libraries for targets ?
-    COMMAND 
+  COMMAND 
     "${CMAKE_COMMAND}" -DCMAKE_INSTALL_COMPONENT=dev
     -P "${CMAKE_BINARY_DIR}/cmake_install.cmake"
+  WORKING_DIRECTORY
+    ${CMAKE_BINARY_DIR}
 )
 add_custom_target(install-python
 #    DEPENDS # TODO: add interface libraries for targets ?
-    COMMAND 
+  COMMAND 
     "${CMAKE_COMMAND}" -DCMAKE_INSTALL_COMPONENT=python
     -P "${CMAKE_BINARY_DIR}/cmake_install.cmake"
+  WORKING_DIRECTORY
+    ${CMAKE_BINARY_DIR}
 )
 

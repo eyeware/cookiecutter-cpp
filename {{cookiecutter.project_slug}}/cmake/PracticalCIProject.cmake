@@ -139,6 +139,8 @@ function(practci_add_cpp_module)
     # requires cmake policy CMP0079, introduced in cmake 3.13.
     # TODO: disabled now target_link_libraries(python_pybind11 INTERFACE ${MODULE_PYTHON_TARGET_NAME}) # TODO: review this target name.
 
+    message("MODULE_INSTALL_PYTHON_SITEARCH: ${MODULE_INSTALL_PYTHON_SITEARCH}")
+
     install(TARGETS ${MODULE_PYTHON_TARGET_NAME}
       LIBRARY DESTINATION ${MODULE_INSTALL_PYTHON_SITEARCH} COMPONENT python
     )
