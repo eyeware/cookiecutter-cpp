@@ -211,8 +211,7 @@ if(BUILD_TESTS)
 
   include(ParseAndAddCatchTests)
   ParseAndAddCatchTests(${PROJECT_TEST_TARGET})
-
-  
+ 
 endif()
 
 if(BUILD_DOC AND NOT INSTALL_FOR_PYPI)
@@ -220,42 +219,42 @@ if(BUILD_DOC AND NOT INSTALL_FOR_PYPI)
 endif()
 
 if(NOT INSTALL_FOR_PYPI)
-# install targets cmake file, previously registered targets in each module.
-install(EXPORT ${PROJECT_NAME}-targets
-  FILE
-    ${PROJECT_NAME}Targets.cmake
-  NAMESPACE
-    ${PROJECT_NAMESPACE}_${PROJECT_NAME}::
-  DESTINATION
-    ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAMESPACE}
-  COMPONENT dev
-)
+  # install targets cmake file, previously registered targets in each module.
+  install(EXPORT ${PROJECT_NAME}-targets
+    FILE
+      ${PROJECT_NAME}Targets.cmake
+    NAMESPACE
+      ${PROJECT_NAMESPACE}_${PROJECT_NAME}::
+    DESTINATION
+      ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAMESPACE}
+    COMPONENT dev
+  )
+
+
+  # TODO: Install component targets, needs to be executed after the cmake build
+  add_custom_target(install-lib
+  #    DEPENDS # TODO: add interface libraries for targets ?
+    COMMAND 
+      "${CMAKE_COMMAND}" -DCMAKE_INSTALL_COMPONENT=lib
+      -P "${CMAKE_BINARY_DIR}/cmake_install.cmake"
+    WORKING_DIRECTORY
+      ${CMAKE_BINARY_DIR}
+  )
+
+  add_custom_target(install-dev
+  #    DEPENDS docs # TODO: add interface libraries for targets ?
+    COMMAND 
+      "${CMAKE_COMMAND}" -DCMAKE_INSTALL_COMPONENT=dev
+      -P "${CMAKE_BINARY_DIR}/cmake_install.cmake"
+    WORKING_DIRECTORY
+      ${CMAKE_BINARY_DIR}
+  )
+  add_custom_target(install-python
+  #    DEPENDS # TODO: add interface libraries for targets ?
+    COMMAND 
+      "${CMAKE_COMMAND}" -DCMAKE_INSTALL_COMPONENT=python
+      -P "${CMAKE_BINARY_DIR}/cmake_install.cmake"
+    WORKING_DIRECTORY
+      ${CMAKE_BINARY_DIR}
+  )
 endif()
-
-# TODO: Install component targets, needs to be executed after the cmake build
-add_custom_target(install-lib
-#    DEPENDS # TODO: add interface libraries for targets ?
-  COMMAND 
-    "${CMAKE_COMMAND}" -DCMAKE_INSTALL_COMPONENT=lib
-    -P "${CMAKE_BINARY_DIR}/cmake_install.cmake"
-  WORKING_DIRECTORY
-    ${CMAKE_BINARY_DIR}
-)
-
-add_custom_target(install-dev
-#    DEPENDS docs # TODO: add interface libraries for targets ?
-  COMMAND 
-    "${CMAKE_COMMAND}" -DCMAKE_INSTALL_COMPONENT=dev
-    -P "${CMAKE_BINARY_DIR}/cmake_install.cmake"
-  WORKING_DIRECTORY
-    ${CMAKE_BINARY_DIR}
-)
-add_custom_target(install-python
-#    DEPENDS # TODO: add interface libraries for targets ?
-  COMMAND 
-    "${CMAKE_COMMAND}" -DCMAKE_INSTALL_COMPONENT=python
-    -P "${CMAKE_BINARY_DIR}/cmake_install.cmake"
-  WORKING_DIRECTORY
-    ${CMAKE_BINARY_DIR}
-)
-
