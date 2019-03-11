@@ -356,17 +356,62 @@ To build the C++ with only project with CMake follow the following steps.
 ::
 
     # go to a directory in the same level of the project root "{{cookiecutter.project_slug}}/"
-    
+
     mkdir build
     cd build
     cmake ../{{cookiecutter.project_slug}}/ -G Ninja -DCMAKE_BUILD_TYPE=Debug
-    
+
     # build the project
     cmake --build . --target all
 
 
-Python Build
-------------
+Python & C++ Build
+------------------
+
+To build the python project follow the following steps.
+
+::
+
+    # go to a directory in the same level of the project root "{{cookiecutter.project_slug}}/"
+
+    python setup.py build
+
+
+Python & C++ passing arguments to cmake
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. _`scikit-build command line` : https://scikit-build.readthedocs.io/en/latest/usage.html#command-line-options
+.. _setuptools : https://setuptools.readthedocs.io/en/latest/
+
+For some specific reason, you may want to build the cmake extensions with
+some specific options that are not set in the `setup.py` script. To do that
+please use: `python setup.py build -- -DSOME_FEATURE:BOOL=OFF`
+
+
+For more details, see `scikit-build command line`_.
+
+
+Python & C++ develop mode
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Python packaging tools (distutils_, setuptools_) has a *special* instalation
+mode, provinding means for python scripts to import the package, but it does
+not copy the python files into the instalation directory, instead creates a
+link, allowing the developer to edit the source code in its original location.
+This feature is usefull for TDD, while editing code and testing, allowing for
+the test tools and scripts for import the code under development in a seamless
+way.
+
+See also `Python & C++ install`_.
+
+To *install* in develop mode use the following command:
+
+::
+
+    # go to project root directory
+    cd {{cookiecutter.project_slug}}
+    python setup.py develop
+
 
 
 Test
@@ -410,6 +455,7 @@ Follows a usefull set of commands for the develop->test cycle.
 4. Execute all tests
 5. Execute specific tests
 6. Execute only failed tests.
+7. Execute tests with code coverage TODO:
 
 
 C++ List all tests
@@ -487,18 +533,147 @@ C++ Execute only failed tests
     ctest --rerun-failed
 
 
-Python + C++
+Python & C++
 ------------
 
+.. _`Python unittest mock` : https://docs.python.org/3.6/library/unittest.mock.html
+.. _pytest : https://docs.pytest.org/en/latest/contents.html
+.. _`pytest command line` : https://docs.pytest.org/en/latest/usage.html
+.. _pytest-xdist : https://pypi.org/project/pytest-xdist/
+.. _`pytest junit` : https://docs.pytest.org/en/latest/usage.html#creating-junitxml-format-files
+.. _pytest-cov : https://pytest-cov.readthedocs.io/en/latest/
 
-Python
-------
+Python tests are implemented using `Python unittest`_ test framework, also take a
+look at `Python unittest mock`_, for integration tests. This project sugests using
+pytest_ for executing tasks related to the TDD cycle.
+
+Check `pytest command line`_ for more usage details.
+
+To check test coverage we use pytest-cov_.
+
+TODO: check pytest-xdist_ for parallel test execution and other extensions to pytest.
+
+Unit tests, are organized by unittest.TestCase, that group fixtures, test cases
+can also be grouped into unittest.TestSuite classes, to know a bit more about
+test structures follow the links above.
+
+Refer to `Python & C++ Build`_, and if developing use `Python & C++ develop mode`_.
+
+Move to the project root directory where the `setup.py` is located.
+
+Follows a usefull set of commands for the develop->test cycle.
+
+1. List all test fixtures
+2. Execute all tests
+3. Execute specific tests
+4. Execute only failed tests
+5. Execute tests with code coverage
+6. Execute tests for CI
+
+
+Python - List all tests
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Using a custom script
+`````````````````````
+
+A list of test fixtures will be printed, and which test case the belong to.
+
 
 ::
 
-    python setup.py test # execute the project test suite
+    python tests/python/list_tests.py
+
+Command output:
+
+::
+
+    test_000_something (python.core.test_core.TestCore)
+    test_000_something (python.test_rock.TestRock)
+
+Using pytest
+````````````
+::
+
+    pytest --setup-plan
+
+Command output:
+
+::
+
+    collected 2 items                                                                                                                                                                                          
+
+    tests/python/test_rock.py
+          SETUP    C _UnitTestCase__pytest_class_setup
+            tests/python/test_rock.py::TestRock::test_000_something (fixtures used: _UnitTestCase__pytest_class_setup)
+          TEARDOWN C _UnitTestCase__pytest_class_setup
+    tests/python/core/test_core.py
+          SETUP    C _UnitTestCase__pytest_class_setup
+            tests/python/core/test_core.py::TestCore::test_000_something (fixtures used: _UnitTestCase__pytest_class_setup)
+          TEARDOWN C _UnitTestCase__pytest_class_setup
+
+Python - Execute all tests
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    pytest
 
 
+Python - Execute specific tests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+All fixtures in a test case:
+
+::
+
+    pytest tests/python/core/test_core.py::TestCore
+
+A specific fixture:
+
+::
+
+    pytest tests/python/test_rock.py::TestRock::test_000_something
+
+
+Python - Execute only failed tests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    pytest --lf
+
+
+Python - Execute tests with code coverage
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    pytest --cov
+
+
+Python - Execute tests for CI
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Executing tests wit junit output. There are other available options to be set in
+the setup.cfg file, please refer to pytest_ and `pytest junit`_.
+
+::
+
+    pytest --junit-xml=<report output path>
+
+Install
+=======
+
+C++ install
+-----------
+
+TODO:
+
+Python & C++ install
+--------------------
+
+TODO:
 
 
 Build Checks
@@ -614,6 +789,8 @@ This work is derived from the work of:
 
 References
 ==========
+
+TODO: organize links.
 
 .. _Miniconda: https://conda.io/miniconda.html
 .. _`Anaconda Package Repository`: https://anaconda.org/anaconda/repo
