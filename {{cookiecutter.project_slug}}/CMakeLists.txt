@@ -183,18 +183,13 @@ if(BUILD_TESTS)
   # make sure you execute "conan install .." in the build directory
   target_link_libraries(${PROJECT_TEST_TARGET} PRIVATE Catch2::Catch2)
 
-  # Register the tests
-  # TODO: check about registering test names to filter the tests
-  # check CTest
-  # add_test(NAME ${PROJECT_NAME}_test COMMAND ${PROJECT_NAME}_test)
-
   # there is no way for ctest to display test output on failure from whithim cmake
   # so add this custom command.
   # SEE: 
   # https://stackoverflow.com/a/36729074/3978614
   # https://stackoverflow.com/a/31124523/3978614
   add_custom_target(check_tests 
-      ${CMAKE_COMMAND} -E echo CWD=${CMAKE_BINARY_DIR}
+      COMMAND ${CMAKE_COMMAND} -E echo CWD=${CMAKE_BINARY_DIR}
       COMMAND ${CMAKE_COMMAND} -E echo CMD=${CMAKE_CTEST_COMMAND} -C $<CONFIG>
       COMMAND ${CMAKE_COMMAND} -E echo ----------------------------------
       COMMAND ${CMAKE_COMMAND} -E env CTEST_OUTPUT_ON_FAILURE=1
@@ -202,6 +197,27 @@ if(BUILD_TESTS)
           WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
           DEPENDS ${PROJECT_TEST_TARGET}
   )
+
+  
+  # catch2 --list-* in the exit code returns the number of elements
+  # causing cmake to fail, this hack is to avoid the fail.
+  # this feature will be deprecated in catch2 
+  # see https://github.com/catchorg/Catch2/blob/master/docs/deprecations.md
+  if (WIN32)
+    set(CUSTOM_COMMAND_SUCCESS "|| exit /b 0")
+  elseif(UNIX)
+    set(CUSTOM_COMMAND_SUCCESS "|| true")
+  else()
+    set(CUSTOM_COMMAND_SUCCESS "")
+  endif ()
+  
+  # list catch2 tests and labels.
+  add_custom_target(list_tests 
+      COMMAND $<TARGET_FILE:${PROJECT_TEST_TARGET}>  ${CUSTOM_COMMAND_SUCCESS} --list-tests
+          WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+          DEPENDS ${PROJECT_TEST_TARGET}
+  )
+
 
   # ----------------------------------------------------------------------------
   # Add project module tests

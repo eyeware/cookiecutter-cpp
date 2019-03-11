@@ -114,7 +114,7 @@ Project Structure
     │   │      ...
     │   │       ├── E.cpp
     │   │       ├── E.h
-    │   │       └── core_python_bindings.cpp            # {{module_name}}_python_bindings.cpp, pybind11 bindings
+    │   │       └── core_python_bindings.cpp            # ${MODULE_NAME}_python_bindings.cpp, pybind11 bindings
     │   └── python
     │       └── {{cookiecutter.project_namespace}}
     │           └── {{cookiecutter.project_slug}}
@@ -227,43 +227,47 @@ Linux (system install) packages
 Conda Packages
 ~~~~~~~~~~~~~~
 
-    1. C++ Library only (shared libs)
-    2. C++ Development (includes, cmake targets, and docs)
-    3. Python (python bindings)
+    1. C++ Library only (shared libs) - {{cookiecutter.project_namespace + '-' + cookiecutter.project_slug}}-lib
+    2. C++ Development (includes, cmake targets, and docs) - {{cookiecutter.project_namespace + '-' + cookiecutter.project_slug}}-dev
+    3. Python (python bindings + python source files) - {{cookiecutter.project_namespace + '-' + cookiecutter.project_slug}}-python
+
+
+Package Files
+`````````````
 
 ::
 
     package name             description      files                                                       package dependencies
 
-    {{cookiecutter.project_namespace + '-' + cookiecutter.project_name}}-lib shared libs
+    {{cookiecutter.project_namespace + '-' + cookiecutter.project_slug}}-lib shared libs
     └── lib
         └── {{cookiecutter.project_namespace}}
-            └── {{cookiecutter.project_name}}
+            └── {{cookiecutter.project_slug}}
                 ├── libcore.so.{{cookiecutter.version}}
                 ├── ...
                 └── lib<module k>.so?
 
-    {{cookiecutter.project_namespace + '-' + cookiecutter.project_name}}-dev development package
+    {{cookiecutter.project_namespace + '-' + cookiecutter.project_slug}}-dev development package
     ├── lib
     │   ├── {{cookiecutter.project_namespace}}
-    │   │   └── {{cookiecutter.project_name}}
+    │   │   └── {{cookiecutter.project_slug}}
     │   │       ├── libcore.a
     │   │       ├── ...
     │   │       └── lib<module k>.a?
     │   └── cmake
     │       └── {{cookiecutter.project_namespace}}
-    │           └── {{cookiecutter.project_name}}
-    │               ├──{{cookiecutter.project_name}}Targets.cmake
-    │               └──{{cookiecutter.project_name}}Config.cmake
+    │           └── {{cookiecutter.project_slug}}
+    │               ├──{{cookiecutter.project_slug}}Targets.cmake
+    │               └──{{cookiecutter.project_slug}}Config.cmake
     └── include
         └── {{cookiecutter.project_namespace}}
-            └── {{cookiecutter.project_name}}
+            └── {{cookiecutter.project_slug}}
 
-    {{cookiecutter.project_namespace + '-' + cookiecutter.project_name}}-python Python package + C++ python bindings
+    {{cookiecutter.project_namespace + '-' + cookiecutter.project_slug}}-python Python package + C++ python bindings
     └── python<ver>
         └── (dist|site)-packages
             └── {{cookiecutter.project_namespace}}
-                └── {{cookiecutter.project_name}}
+                └── {{cookiecutter.project_slug}}
                     ├── core.<python-sufix>.so          TODO: check nuitka subpackages for multipackage extension modules
                     ├── ...
                     ├── <module k>.<python-sufix>.so
@@ -273,7 +277,7 @@ Conda Packages
 
 
 Python packages
-~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
     1. Python wheel package, check `Wheel vs Egg`_ and `scikit-build` cmake integration.
 
@@ -333,18 +337,166 @@ TDD Flow Diagram::
               +--------------------+ Test Passed? +------+
 
 
+Build
+=====
 
-Publish Code
-============
+The project uses two build systems one for C++ (CMake_) and another for python a C++ python integration scikit-build_, based on python distutils_, which integrates with CMake_.
 
-Before publishing code you should check the formatting and make sure all tests are passing.
-There are pre-commit hooks for git installed in the git repository to enforce these topics locally.
+
+.. _scikit-build : https://scikit-build.readthedocs.io/en/latest/
+.. _distutils : https://docs.python.org/3.6/distutils/setupscript.html
+.. _CMake : https://cmake.org/documentation/
+
+
+C++ Build
+---------
+
+To build the C++ with only project with CMake follow the following steps.
+
+::
+
+    # go to a directory in the same level of the project root "{{cookiecutter.project_slug}}/"
+    
+    mkdir build
+    cd build
+    cmake ../{{cookiecutter.project_slug}}/ -G Ninja -DCMAKE_BUILD_TYPE=Debug
+    
+    # build the project
+    cmake --build . --target all
+
+
+Python Build
+------------
 
 
 Test
 ====
 
 
+C++ Test
+--------
+
+
+
+.. _`Catch2 command line` : https://github.com/catchorg/Catch2/blob/master/docs/command-line.md
+.. _ctest : https://cmake.org/cmake/help/latest/manual/ctest.1.html
+.. _`ctest (1)`: https://gitlab.kitware.com/cmake/community/wikis/doc/ctest/Testing-With-CTest
+
+C++ tests are implemented using the Catch2_ header only library. Catch2 provides
+some features for testing, namely tests are defined with labels in order to
+provide means to execute only specific tests. The tests are compiled into an
+executable that is executed with command line options to provide more controll
+regarding which tests to execute, and which format the test result sould be
+outputed in order to integrate with reporting tools. For more details refer to
+`Catch2 command line`_.
+
+Catch2 provides some CMake_ modules to integrate with ctest_ (see also 
+`ctest (1)`_), the cmake test tool. ctest executes as a frontend, running the
+Catch2 executables. ctest has means to filter tests to excute, selecting their
+label from a given regex.
+
+TODO: https://github.com/practicalci/cookiecutter-cpp/issues/8
+
+
+First build the project. See `C++ Build`_.
+
+Move to project ``build`` directory and issue the following commands depending on your use case.
+
+Follows a usefull set of commands for the develop->test cycle.
+
+1. List all tests
+2. List all lables
+3. List tests and labels
+4. Execute all tests
+5. Execute specific tests
+6. Execute only failed tests.
+
+
+C++ List all tests
+~~~~~~~~~~~~~~~~~~
+
+::
+
+    cd build
+    ctest -N
+
+C++ List all lables
+~~~~~~~~~~~~~~~~~~~
+
+::
+
+    cd build
+    ctest --print-labels
+
+
+C++ List tests and labels
+~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+::
+
+    cd build
+    cmake --build . --target list_tests
+
+
+C++ Execute all tests
+~~~~~~~~~~~~~~~~~~~~~~
+
+Using ctest_:
+
+
+::
+
+    cd build
+    ctest
+
+Using cmake build target:
+
+::
+
+    cd build
+    cmake --build . --target test
+
+C++ Execute specific tests
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For more details please check ctest_ options (-L, -LE, -R, -RE), and others.
+
+C++ Filter test by name
+```````````````````````
+
+::
+
+    cd build
+    ctest -R <regex>
+
+C++ Filter test by label
+````````````````````````
+
+::
+
+    cd build
+    ctest -L <regex>
+
+C++ Execute only failed tests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+::
+
+    cd build
+    ctest --rerun-failed
+
+
+Python + C++
+------------
+
+
+Python
+------
+
+::
+
+    python setup.py test # execute the project test suite
 
 
 
@@ -368,24 +520,19 @@ Set of requirements to support TDD development cycle.
 
 1. C++ tests
 
-  1.1. execute all tests, exporting gcov (coverage) results.
+  1. execute all tests, exporting gcov (coverage) results.
+  2. execute and filter tests based on tags, such:
 
-  1.2. execute and filter tests based on tags, such:
+    1. ``[perf]``  - performance related tests ?
+    2. ``[mem]``   - memory memory related tests ?
+    3. ``[func1]`` - functionality 1 ...
 
-    1.2.1. ``[perf]``  - performance related tests ?
-    
-    1.2.2. ``[mem]``   - memory memory related tests ?
-    
-    1.2.3. ``[func1]`` - functionality 1 ...
-
-  1.3. execute tests under valgrind, to check for memory issues.
+  3. execute tests under valgrind, to check for memory issues.
 
 2. test python integration
 
-  2.1 execute tests under valgrind, to check for memory issues.
-  
-  2.1 execute performance tests, with time outputs.
-  
+  1. execute tests under valgrind, to check for memory issues.
+  2. execute performance tests, with time outputs.
 
 
 Additional Checks
@@ -418,6 +565,12 @@ Code Checks
 
 .. _`LLVM Code Style`: https://llvm.org/docs/CodingStandards.html
 
+
+Publish Code
+============
+
+Before publishing code you should check the formatting and make sure all tests are passing.
+There are pre-commit hooks for git installed in the git repository to enforce these topics locally.
 
 Versioning
 ----------
