@@ -1,0 +1,22 @@
+{
+  "cookiecutter": {
+    "organization": "org",
+    "author": "First Last",
+    "email": "first.last@gmail.com",
+    "year": "2019",
+    "license": "MIT",
+    "project_name": "rock",
+    "description": "A rock solid project",
+    "long_description": "A rock solid project with enforced style, testing and static analysis",
+    "project_slug": "rock",
+    "project_namespace": "org",
+    "version": "1.0.0",
+    "cpp_standard": "11",
+    "check_style": "True",
+    "git_server": "bitbucket.org",
+    "username": "flast",
+    "branch": "master",
+    "remote": "origin",
+    "_template": "gh:practicalci/cookiecutter-cpp"
+  }
+}
