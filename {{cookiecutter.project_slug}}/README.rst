@@ -192,8 +192,8 @@ invoke cmake in the following way:
 
 Note: please check this `install cmake components (1)`_, `install cmake components (2)`_
 
-.. _`install cmake components (1)`: https://stackoverflow.com/questions/9190098/for-cmakes-install-command-what-can-the-component-argument-do
-.. _`install cmake components (2)`: https://stackoverflow.com/questions/21852817/cmake-how-to-create-alias-for-installing-different-targets/21853784#21853784
+.. _`install cmake components (1)`: https://stackoverflow.com/a/9192877
+.. _`install cmake components (2)`: https://stackoverflow.com/a/21853784
 
 
 ::

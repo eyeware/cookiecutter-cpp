@@ -186,8 +186,8 @@ if(BUILD_TESTS)
   # there is no way for ctest to display test output on failure from whithim cmake
   # so add this custom command.
   # SEE: 
-  # https://stackoverflow.com/a/36729074/3978614
-  # https://stackoverflow.com/a/31124523/3978614
+  # https://stackoverflow.com/a/36729074
+  # https://stackoverflow.com/a/31124523
   add_custom_target(check_tests 
       COMMAND ${CMAKE_COMMAND} -E echo CWD=${CMAKE_BINARY_DIR}
       COMMAND ${CMAKE_COMMAND} -E echo CMD=${CMAKE_CTEST_COMMAND} -C $<CONFIG>
