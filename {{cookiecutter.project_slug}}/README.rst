@@ -11,7 +11,7 @@ Summary
 {{ cookiecutter.long_description }}
 
 This project is a template from ``gh:practicalci/cookiecutter-cpp`` cookiecutter.
-For improvements and changes, please contact the coockiecuter author.
+For improvements and changes, please contact the cookiecutter author.
 
 .. sectnum::
 .. contents:: Table of Contents
@@ -162,9 +162,9 @@ Project Options
 +-------------------------------------------------+---------+-----------------------------------------------------+----------+
 | ENABLE_${MODULE_NAME}_PYTHON_MODULE_STATIC_LINK | module  | enable linking the python bindings with the static  | OFF      |
 |                                                 |         | lib of the module. For this option to work properly,|          |
-|                                                 |         | the module must me self contained, in some cases    |          |
+|                                                 |         | the module must be self contained, in some cases    |          |
 |                                                 |         | this might break functionality, such as static      |          |
-|                                                 |         | funtions on other modules...                        |          |
+|                                                 |         | functions on other modules...                       |          |
 +-------------------------------------------------+---------+-----------------------------------------------------+----------+
 | INSTALL_FOR_PYPI                                | project | Install libraries and python bindings inside the    | OFF      |
 |                                                 |         | python package.                                     |          |
@@ -173,7 +173,7 @@ Project Options
 |                                                 |         | It is used to build standalone python wheels with   |          |
 |                                                 |         | setup.py                                            |          |
 +-------------------------------------------------+---------+-----------------------------------------------------+----------+
-| CMAKE_INSTALL_PREFIX                            | project | project instalation prefix                          |          |
+| CMAKE_INSTALL_PREFIX                            | project | project installation prefix                         |          |
 +-------------------------------------------------+---------+-----------------------------------------------------+----------+
 
 
@@ -186,15 +186,11 @@ CMake Project Components
 3. python - install python bindings
 
 
-To install the components separetly we need to first build the project and then
+To install the components separately we need to first build the project and then
 invoke cmake in the following way:
 
 
 Note: please check this `install cmake components (1)`_, `install cmake components (2)`_
-
-.. _`install cmake components (1)`: https://stackoverflow.com/a/9192877
-.. _`install cmake components (2)`: https://stackoverflow.com/a/21853784
-
 
 ::
 
@@ -215,7 +211,7 @@ In the command line, e.g.
 Output - CMake Project Install
 ------------------------------
 
-This project can be broken and installed in several ways:
+This project can be separated logically into several components and installed in several ways:
 
 Linux (system install) packages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -340,18 +336,21 @@ TDD Flow Diagram::
 Build
 =====
 
-The project uses two build systems one for C++ (CMake_) and another for python a C++ python integration scikit-build_, based on python distutils_, which integrates with CMake_.
+The project uses two build systems one for C++ (CMake_) and another for python a
+C++ python integration scikit-build_, based on python distutils_, which
+integrates with CMake_.
 
 
-.. _scikit-build : https://scikit-build.readthedocs.io/en/latest/
-.. _distutils : https://docs.python.org/3.6/distutils/setupscript.html
-.. _CMake : https://cmake.org/documentation/
-
-
-C++ Build
----------
+C++ - Build
+-----------
 
 To build the C++ with only project with CMake follow the following steps.
+
+Use cmake option `-DCMAKE_BUILD_TYPE=Debug` when in development to enable test
+coverage target.
+
+Use cmake option `-DCMAKE_BUILD_TYPE=Release` when in prodution mode or to get
+maximum acurrate performance results.
 
 ::
 
@@ -380,9 +379,6 @@ To build the python project follow the following steps.
 Python & C++ passing arguments to cmake
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. _`scikit-build command line` : https://scikit-build.readthedocs.io/en/latest/usage.html#command-line-options
-.. _setuptools : https://setuptools.readthedocs.io/en/latest/
-
 For some specific reason, you may want to build the cmake extensions with
 some specific options that are not set in the `setup.py` script. To do that
 please use: `python setup.py build -- -DSOME_FEATURE:BOOL=OFF`
@@ -394,9 +390,9 @@ For more details, see `scikit-build command line`_.
 Python & C++ develop mode
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Python packaging tools (distutils_, setuptools_) has a *special* instalation
+Python packaging tools (distutils_, setuptools_) have a *special* installation
 mode, provinding means for python scripts to import the package, but it does
-not copy the python files into the instalation directory, instead creates a
+not copy the python files into the installation directory, instead creates a
 link, allowing the developer to edit the source code in its original location.
 This feature is usefull for TDD, while editing code and testing, allowing for
 the test tools and scripts for import the code under development in a seamless
@@ -412,25 +408,16 @@ To *install* in develop mode use the following command:
     cd {{cookiecutter.project_slug}}
     python setup.py develop
 
-
-
 Test
 ====
-
 
 C++ Test
 --------
 
-
-
-.. _`Catch2 command line` : https://github.com/catchorg/Catch2/blob/master/docs/command-line.md
-.. _ctest : https://cmake.org/cmake/help/latest/manual/ctest.1.html
-.. _`ctest (1)`: https://gitlab.kitware.com/cmake/community/wikis/doc/ctest/Testing-With-CTest
-
 C++ tests are implemented using the Catch2_ header only library. Catch2 provides
 some features for testing, namely tests are defined with labels in order to
 provide means to execute only specific tests. The tests are compiled into an
-executable that is executed with command line options to provide more controll
+executable that is executed with command line options to provide more control
 regarding which tests to execute, and which format the test result sould be
 outputed in order to integrate with reporting tools. For more details refer to
 `Catch2 command line`_.
@@ -443,11 +430,11 @@ label from a given regex.
 TODO: https://github.com/practicalci/cookiecutter-cpp/issues/8
 
 
-First build the project. See `C++ Build`_.
+First build the project. See `C++ - Build`_.
 
 Move to project ``build`` directory and issue the following commands depending on your use case.
 
-Follows a usefull set of commands for the develop->test cycle.
+Follows a useful set of commands for the develop->test cycle.
 
 1. List all tests
 2. List all lables
@@ -455,19 +442,19 @@ Follows a usefull set of commands for the develop->test cycle.
 4. Execute all tests
 5. Execute specific tests
 6. Execute only failed tests.
-7. Execute tests with code coverage TODO:
+7. Execute tests with code coverage
 
 
-C++ List all tests
-~~~~~~~~~~~~~~~~~~
+C++ - List all tests
+~~~~~~~~~~~~~~~~~~~~
 
 ::
 
     cd build
     ctest -N
 
-C++ List all lables
-~~~~~~~~~~~~~~~~~~~
+C++ - List all lables
+~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
@@ -475,8 +462,8 @@ C++ List all lables
     ctest --print-labels
 
 
-C++ List tests and labels
-~~~~~~~~~~~~~~~~~~~~~~~~~
+C++ - List tests and labels
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 ::
@@ -485,8 +472,8 @@ C++ List tests and labels
     cmake --build . --target list_tests
 
 
-C++ Execute all tests
-~~~~~~~~~~~~~~~~~~~~~~
+C++ - Execute all tests
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Using ctest_:
 
@@ -503,29 +490,29 @@ Using cmake build target:
     cd build
     cmake --build . --target test
 
-C++ Execute specific tests
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+C++ - Execute specific tests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 For more details please check ctest_ options (-L, -LE, -R, -RE), and others.
 
-C++ Filter test by name
-```````````````````````
+C++ - Filter test by name
+`````````````````````````
 
 ::
 
     cd build
     ctest -R <regex>
 
-C++ Filter test by label
-````````````````````````
+C++ - Filter test by label
+``````````````````````````
 
 ::
 
     cd build
     ctest -L <regex>
 
-C++ Execute only failed tests
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+C++ - Execute only failed tests
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ::
 
@@ -533,19 +520,27 @@ C++ Execute only failed tests
     ctest --rerun-failed
 
 
+C++ - Execute tests with code coverage
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+In order to execute tests under test coverage, the project must be build in
+`Debug` mode, see `C++ - Build`_.
+
+::
+
+    cd build
+    cmake --build . --target coverage
+
+Open the file `./coverage/index.html` with your browser to see the coverage 
+report. The report is generated inside the `build` directory.
+
+
 Python & C++
 ------------
 
-.. _`Python unittest mock` : https://docs.python.org/3.6/library/unittest.mock.html
-.. _pytest : https://docs.pytest.org/en/latest/contents.html
-.. _`pytest command line` : https://docs.pytest.org/en/latest/usage.html
-.. _pytest-xdist : https://pypi.org/project/pytest-xdist/
-.. _`pytest junit` : https://docs.pytest.org/en/latest/usage.html#creating-junitxml-format-files
-.. _pytest-cov : https://pytest-cov.readthedocs.io/en/latest/
-
-Python tests are implemented using `Python unittest`_ test framework, also take a
-look at `Python unittest mock`_, for integration tests. This project sugests using
-pytest_ for executing tasks related to the TDD cycle.
+Python tests are implemented using `Python unittest`_ test framework, also take 
+a look at `Python unittest mock`_, for integration tests. This project suggests 
+using pytest_ for executing tasks related to the TDD cycle.
 
 Check `pytest command line`_ for more usage details.
 
@@ -553,15 +548,15 @@ To check test coverage we use pytest-cov_.
 
 TODO: check pytest-xdist_ for parallel test execution and other extensions to pytest.
 
-Unit tests, are organized by unittest.TestCase, that group fixtures, test cases
-can also be grouped into unittest.TestSuite classes, to know a bit more about
-test structures follow the links above.
+Unit tests, are organized by unittest.TestCase, that group fixtures (test 
+functions), test cases can also be grouped into unittest.TestSuite classes, to
+know a bit more about test structures follow the links above.
 
 Refer to `Python & C++ Build`_, and if developing use `Python & C++ develop mode`_.
 
 Move to the project root directory where the `setup.py` is located.
 
-Follows a usefull set of commands for the develop->test cycle.
+Follows a useful set of commands for the develop->test cycle.
 
 1. List all test fixtures
 2. Execute all tests
@@ -574,22 +569,8 @@ Follows a usefull set of commands for the develop->test cycle.
 Python - List all tests
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Using a custom script
-`````````````````````
+A list of test fixtures_ (functions) will be printed.
 
-A list of test fixtures will be printed, and which test case the belong to.
-
-
-::
-
-    python tests/python/list_tests.py
-
-Command output:
-
-::
-
-    test_000_something (python.core.test_core.TestCore)
-    test_000_something (python.test_rock.TestRock)
 
 Using pytest
 ````````````
@@ -655,7 +636,7 @@ Python - Execute tests with code coverage
 Python - Execute tests for CI
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Executing tests wit junit output. There are other available options to be set in
+Executing tests with junit output. There are other available options to be set in
 the setup.cfg file, please refer to pytest_ and `pytest junit`_.
 
 ::
@@ -713,20 +694,14 @@ Set of requirements to support TDD development cycle.
 Additional Checks
 -----------------
 
-TODO: Ongoing
+TODO: pre-commit, currently broken
 
-
-These checks, are available unde one target, and are to be executed in pre commit conditions or in the CI,
-not necessary in TDD fast development cycle.
+These checks are available under one target, and are to be executed in 
+pre-commit conditions or in the CI, not necessary in TDD fast development cycle.
 
 1. Memory checks - valgrind
 2. clang-tidy
 3. clang-format
-
-.. _Catch2 : https://github.com/catchorg/Catch2
-.. _`Python unittest` : https://docs.python.org/3.6/library/unittest.html
-.. _swig: http://www.swig.org/
-.. _pybind11: https://pybind11.readthedocs.io/en/stable/
 
 
 Code Checks
@@ -738,9 +713,6 @@ Code Checks
 - **test reports** - TODO: 
 
 
-.. _`LLVM Code Style`: https://llvm.org/docs/CodingStandards.html
-
-
 Publish Code
 ============
 
@@ -749,7 +721,6 @@ There are pre-commit hooks for git installed in the git repository to enforce th
 
 Versioning
 ----------
-
 
 This project uses the following versioning scheme ``<major>.<minor>.<patch>[-<release>]``. 
 The release part identifies the development stage. Release part is one of {prod, alpha, beta}, being prod optional.
@@ -769,6 +740,12 @@ To increase the release version perform::
 
 to reset the release, bump the patch part ??
 
+Known Issues
+============
+
+.. _`scikit-build gihub issue #363` : https://github.com/scikit-build/scikit-build/issues/363
+
+* `python setup.py develop` does not work with subpackages (same as `pip install -e .`) - `scikit-build gihub issue #363`_
 
 
 Attributions
@@ -790,41 +767,64 @@ This work is derived from the work of:
 References
 ==========
 
-TODO: organize links.
-
-.. _Miniconda: https://conda.io/miniconda.html
-.. _`Anaconda Package Repository`: https://anaconda.org/anaconda/repo
-.. _Conan: https://conan.io/
-.. _`Conan Package Repository`: https://bintray.com/conan/conan-center
-.. _Vagrant: https://www.vagrantup.com
-.. _`Multi Machine Vagrant File`: https://www.vagrantup.com/docs/multi-machine/
-
-
-
+* `Anaconda Package Repository`_
+* `Catch2 command line`_
 * Catch2_
-* `Python unittest`_
-* swig_
+* CMake_
+* `ctest (1)`_
+* ctest_
+* distutils_
+* fixtures_
+* `install cmake components (1)`_
+* `install cmake components (2)`_
+* `LLVM Code Style`_
+* Miniconda_
+* `opencv from pypi`_
 * pybind11_
 * `pyinstaller specs`_
+* `pytest command line`_
+* pytest-cov_
+* pytest_
+* `pytest junit`_
+* pytest-xdist_
+* `Python unittest`_
+* `Python unittest mock`_
+* `scikit-build command line`_
+* scikit-build_
+* setuptools_
+* swig_
+* `torch from pypi`_
+* `Wheel vs Egg`_
 
-
-
+.. _`Anaconda Package Repository`: https://anaconda.org/anaconda/repo
+.. _`Catch2 command line` : https://github.com/catchorg/Catch2/blob/master/docs/command-line.md
 .. _Catch2 : https://github.com/catchorg/Catch2
-.. _`Python unittest` : https://docs.python.org/3.6/library/unittest.html
-.. _`pyinstaller specs` : https://pythonhosted.org/PyInstaller/spec-files.html
-
-.. _`Wheel vs Egg` : https://packaging.python.org/discussions/wheel-vs-egg/
-.. _`scikit-build` : https://scikit-build.readthedocs.io/en/latest/
-
+.. _CMake : https://cmake.org/documentation/
+.. _Conan: https://conan.io/
+.. _`Conan Package Repository`: https://bintray.com/conan/conan-center
+.. _`ctest (1)`: https://gitlab.kitware.com/cmake/community/wikis/doc/ctest/Testing-With-CTest
+.. _ctest : https://cmake.org/cmake/help/latest/manual/ctest.1.html
+.. _distutils : https://docs.python.org/3.6/distutils/setupscript.html
+.. _fixtures : http://pythontesting.net/framework/unittest/unittest-fixtures/
+.. _`install cmake components (1)`: https://stackoverflow.com/a/9192877
+.. _`install cmake components (2)`: https://stackoverflow.com/a/21853784
+.. _`LLVM Code Style`: https://llvm.org/docs/CodingStandards.html
+.. _Miniconda: https://conda.io/miniconda.html
+.. _`Multi Machine Vagrant File`: https://www.vagrantup.com/docs/multi-machine/
 .. _`opencv from pypi` : https://files.pythonhosted.org/packages/37/49/874d119948a5a084a7ebe98308214098ef3471d76ab74200f9800efeef15/opencv_python-4.0.0.21-cp36-cp36m-manylinux1_x86_64.whl
-.. _`torch from pypi` : https://files.pythonhosted.org/packages/31/ca/dd2c64f8ab5e7985c4af6e62da933849293906edcdb70dac679c93477733/torch-1.0.1.post2-cp36-cp36m-manylinux1_x86_64.whl
-.. _swig: http://www.swig.org/
 .. _pybind11: https://pybind11.readthedocs.io/en/stable/
-
-
-1. Miniconda_
-2. `Anaconda Package Repository`_
-3. Conan_
-4. `Conan Package Repository`_
-5. Vagrant_
-6. `Multi Machine Vagrant File`_
+.. _`pyinstaller specs` : https://pythonhosted.org/PyInstaller/spec-files.html
+.. _`pytest command line` : https://docs.pytest.org/en/latest/usage.html
+.. _pytest-cov : https://pytest-cov.readthedocs.io/en/latest/
+.. _pytest : https://docs.pytest.org/en/latest/contents.html
+.. _`pytest junit` : https://docs.pytest.org/en/latest/usage.html#creating-junitxml-format-files
+.. _pytest-xdist : https://pypi.org/project/pytest-xdist/
+.. _`Python unittest` : https://docs.python.org/3.6/library/unittest.html
+.. _`Python unittest mock` : https://docs.python.org/3.6/library/unittest.mock.html
+.. _`scikit-build command line` : https://scikit-build.readthedocs.io/en/latest/usage.html#command-line-options
+.. _scikit-build : https://scikit-build.readthedocs.io/en/latest/
+.. _setuptools : https://setuptools.readthedocs.io/en/latest/
+.. _swig: http://www.swig.org/
+.. _`torch from pypi` : https://files.pythonhosted.org/packages/31/ca/dd2c64f8ab5e7985c4af6e62da933849293906edcdb70dac679c93477733/torch-1.0.1.post2-cp36-cp36m-manylinux1_x86_64.whl
+.. _Vagrant: https://www.vagrantup.com
+.. _`Wheel vs Egg` : https://packaging.python.org/discussions/wheel-vs-egg/

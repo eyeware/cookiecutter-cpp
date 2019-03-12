@@ -12,7 +12,7 @@ set(PROJECT_NAMESPACE   "{{ cookiecutter.project_namespace }}")
 option(BUILD_STATIC "Build static libraries." OFF)
 
 option(BUILD_PYTHON_PYBIND11 "Build pybind11 python bindings." ON)
-option(BUILD_PYTHON_SWIG "Build pybind11 python bindings." OFF)
+option(BUILD_PYTHON_SWIG "Build swig python bindings." OFF)
 
 option(BUILD_DOC "Build code documentation using Doxygen." OFF)
 option(BUILD_TESTS "Build project tests" ON)
@@ -56,7 +56,7 @@ add_library(${PROJECT_NAME} INTERFACE)
 
 if(BUILD_PYTHON_PYBIND11 OR BUILD_PYTHON_SWIG)
 
-  # multi value options, see https://stackoverflow.com/a/47612735/3978614
+  # multi value options, see https://stackoverflow.com/a/47612735
 
 
   find_package(Python REQUIRED COMPONENTS Interpreter Development)
