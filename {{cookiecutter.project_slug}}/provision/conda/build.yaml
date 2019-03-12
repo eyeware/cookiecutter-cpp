@@ -1,0 +1,13 @@
+name: {{ cookiecutter.project_slug }}
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - bump2version=0.5.8
+  - python=3.6.6
+  - cmake=3.12.4
+  - conan=1.9.0
+  - doxygen=1.8.14
+  - conda-wrappers
+  - pip:
+    - gcovr==4.1
