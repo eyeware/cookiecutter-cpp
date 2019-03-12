@@ -220,16 +220,16 @@ This project can be broken and installed in several ways:
 Linux (system install) packages
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    1. C++ Library only (shared libs)
-    2. C++ Development (includes, cmake targets, and docs)
-    3. Python (python bindings)
+1. C++ Library only (shared libs)
+2. C++ Development (includes, cmake targets, and docs)
+3. Python (python bindings)
 
 Conda Packages
 ~~~~~~~~~~~~~~
 
-    1. C++ Library only (shared libs) - {{cookiecutter.project_namespace + '-' + cookiecutter.project_slug}}-lib
-    2. C++ Development (includes, cmake targets, and docs) - {{cookiecutter.project_namespace + '-' + cookiecutter.project_slug}}-dev
-    3. Python (python bindings + python source files) - {{cookiecutter.project_namespace + '-' + cookiecutter.project_slug}}-python
+1. C++ Library only (shared libs) - {{cookiecutter.project_namespace + '-' + cookiecutter.project_slug}}-lib
+2. C++ Development (includes, cmake targets, and docs) - {{cookiecutter.project_namespace + '-' + cookiecutter.project_slug}}-dev
+3. Python (python bindings + python source files) - {{cookiecutter.project_namespace + '-' + cookiecutter.project_slug}}-python
 
 
 Package Files
@@ -279,7 +279,7 @@ Package Files
 Python packages
 ~~~~~~~~~~~~~~~
 
-    1. Python wheel package, check `Wheel vs Egg`_ and `scikit-build` cmake integration.
+1. Python wheel package, check `Wheel vs Egg`_ and `scikit-build` cmake integration.
 
 
 Some examples of packages with native libs from pipy.
@@ -695,19 +695,19 @@ Set of requirements to support TDD development cycle.
 
 1. C++ tests
 
-  1. execute all tests, exporting gcov (coverage) results.
-  2. execute and filter tests based on tags, such:
+   1. execute all tests, exporting gcov (coverage) results.
+   2. execute and filter tests based on tags, such:
 
-    1. ``[perf]``  - performance related tests ?
-    2. ``[mem]``   - memory memory related tests ?
-    3. ``[func1]`` - functionality 1 ...
+      1. ``[perf]``  - performance related tests ?
+      2. ``[mem]``   - memory memory related tests ?
+      3. ``[func1]`` - functionality 1 ...
 
-  3. execute tests under valgrind, to check for memory issues.
+   3. execute tests under valgrind, to check for memory issues.
 
 2. test python integration
 
-  1. execute tests under valgrind, to check for memory issues.
-  2. execute performance tests, with time outputs.
+   1. execute tests under valgrind, to check for memory issues.
+   2. execute performance tests, with time outputs.
 
 
 Additional Checks
