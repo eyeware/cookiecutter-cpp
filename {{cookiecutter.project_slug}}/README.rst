@@ -20,48 +20,26 @@ For improvements and changes, please contact the cookiecutter author.
 Setup Project Environment
 =========================
 
-Boot Native Environments
-------------------------
+.. _miniconda : https://docs.conda.io/en/latest/miniconda.html
 
-To boostrap the native development environment execute the script ``scripts\provision.sh -c <conda user>``.
-For native machines, use ``scripts\provision.sh -c root``.
-For vagrant vms, use ``scripts\provision.sh -c vagrant``
-
-
-- <conda user> : Miniconda user, that will have permissions to add remove packages of the root environment.
-
-
-Boot Virtualized Environments (Vagrant)
----------------------------------------
-
-This project, is prepared to bootstrap a contained linux environment using
-Vagrant_ and `Multi Machine Vagrant File`_, and different flavours meant for
-interactive development. To initialize one of such environments, choose your
-linux flavour and execute one of the commands below.
-
-+------------------+-----------------------------+--------------------------+
-| Operating System | Vagrant Command             | Description              |
-+==================+=============================+==========================+
-| ubuntu-16.04     | ``vagrant up ubuntu-16.04`` | ubuntu server ~450M      |
-+------------------+-----------------------------+--------------------------+
-| alpine64         | ``vagrant up alpine64``     | low footprint image ~50M |
-+------------------+-----------------------------+--------------------------+
-
-Add Operating System Dependencies
----------------------------------
-
-To add packages to the development environment, edit the respective
-(``ubuntu.sh``, ``alpine.sh``, ...) script under the folder ``scripts`` folder.
-
+To setup the project you will require conda_ package manager. Download from
+miniconda_.
 
 Linux:
 ~~~~~~
-TODO:
+
 
 Windows:
 ~~~~~~~~
 
-TODO:
+.. _chocolatey : https://chocolatey.org/docs/installation
+
+For windows, please install chocolatey_ and use the command below.
+
+::
+
+    choco install miniconda3 --params="'/AddToPath:1'"
+
 
 Cross Platform Environment and Dependencies (Miniconda_)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -800,8 +778,6 @@ References
 .. _`Catch2 command line` : https://github.com/catchorg/Catch2/blob/master/docs/command-line.md
 .. _Catch2 : https://github.com/catchorg/Catch2
 .. _CMake : https://cmake.org/documentation/
-.. _Conan: https://conan.io/
-.. _`Conan Package Repository`: https://bintray.com/conan/conan-center
 .. _`ctest (1)`: https://gitlab.kitware.com/cmake/community/wikis/doc/ctest/Testing-With-CTest
 .. _ctest : https://cmake.org/cmake/help/latest/manual/ctest.1.html
 .. _distutils : https://docs.python.org/3.6/distutils/setupscript.html
