@@ -405,7 +405,7 @@ This feature is usefull for TDD, while editing code and testing, allowing for
 the test tools and scripts for import the code under development in a seamless
 way.
 
-See also `Python & C++ install`_.
+See also `Python & C++ - install`_.
 
 To *install* in develop mode use the following command:
 
@@ -654,12 +654,12 @@ Install
 =======
 
 C++ - install
------------
+-------------
 
 TODO:
 
 Python & C++ - install
---------------------
+----------------------
 
 TODO:
 
