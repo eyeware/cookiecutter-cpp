@@ -29,7 +29,7 @@ DIR_="$( cd -P "$( dirname "$SOURCE_" )" >/dev/null && pwd )"
 #------------------------------------------------------------------------------
 
 # get current linux distro
-DISTRO_="$($DIR_/distro.sh)"
+DISTRO_="$($DIR_/distro.sh -f)"
 
 # execute distro specific provisioning scripts.
 $DIR_/packages/$DISTRO_.sh

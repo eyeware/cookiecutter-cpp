@@ -20,28 +20,46 @@ For improvements and changes, please contact the cookiecutter author.
 Setup Project Environment
 =========================
 
-.. _miniconda : https://docs.conda.io/en/latest/miniconda.html
+.. _conda : https://conda.io/en/latest/
+.. _conda-forge : https://conda-forge.org/
 
-To setup the project you will require conda_ package manager. Download from
-miniconda_.
-
-Linux:
-~~~~~~
+To setup the project you will require conda_ package manager, and other native 
+tools that are not available in _conda-forge packages.
 
 
-Windows:
-~~~~~~~~
+Linux
+-----
+
+For ubuntu 16.04, please use the script in the `provision` directory. To add
+additional tools to the project, check the scripts in `provision/linux/packages`
+you will find files in the format `<distro>-<release>.sh` (ubuntu-16.04.sh)
+add there specific `apt-get install commands`.
+
+If you consider using another linux distro/release, please create a script
+following the convention `<distro>-<release>.sh` to add specific native
+packages.
+
+::
+
+    sudo ./provision/linux/provision.sh
+
+
+
+Windows
+-------
 
 .. _chocolatey : https://chocolatey.org/docs/installation
 
 For windows, please install chocolatey_ and use the command below.
+
+TODO: many of the check tools might not be available for windows.
 
 ::
 
     choco install miniconda3 --params="'/AddToPath:1'"
 
 
-Cross Platform Environment and Dependencies (Miniconda_)
+Cross Platform Environment and Dependencies (miniconda_)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Add to ``conda_env.yaml`` conda packages that are required for the build
@@ -624,25 +642,43 @@ the setup.cfg file, please refer to pytest_ and `pytest junit`_.
 Install
 =======
 
-C++ install
+C++ - install
 -----------
 
 TODO:
 
-Python & C++ install
+Python & C++ - install
 --------------------
 
 TODO:
 
 
-Build Checks
-============
-
-
+C++ - Static Code Checks
+========================
 
 General checks for the build.
 
+TODO: https://blog.kitware.com/static-checks-with-cmake-cdash-iwyu-clang-tidy-lwyu-cpplint-and-cppcheck/
+
+
 1. prevent **in source build tree**, allow for the execution of tests and checks.
+
+Linux
+-----
+
+Windows
+-------
+
+
+C++ - Dynamic Code Checks
+=========================
+
+Linux
+-----
+
+Windows
+-------
+
 
 Requirements
 ------------
@@ -674,7 +710,7 @@ Additional Checks
 
 TODO: pre-commit, currently broken
 
-These checks are available under one target, and are to be executed in 
+These checks are available under one target, and are to be executed in
 pre-commit conditions or in the CI, not necessary in TDD fast development cycle.
 
 1. Memory checks - valgrind
@@ -685,11 +721,17 @@ pre-commit conditions or in the CI, not necessary in TDD fast development cycle.
 Code Checks
 -----------
 
-- **formating** - `LLVM Code Style`_
+- **formating** - clang-format - `LLVM Code Style`_
 - **lint** - TODO: clang linter or cpplint
 - **test code coverage** - TODO: underway lcov gcov
-- **test reports** - TODO: 
+- **test reports** - TODO:
 
+
+CMake File Checks
+-----------------
+
+cmakelint - pypi https://github.com/richq/cmake-lint - https://pypi.org/project/cmakelint/
+clang-format - https://github.com/cheshirekow/cmake_format - https://pypi.org/project/cmake_format/
 
 Publish Code
 ============
@@ -722,9 +764,10 @@ Known Issues
 ============
 
 .. _`scikit-build gihub issue #363` : https://github.com/scikit-build/scikit-build/issues/363
+.. _`cmake export targets issue #18935` : https://gitlab.kitware.com/cmake/cmake/issues/18935
 
 * `python setup.py develop` does not work with subpackages (same as `pip install -e .`) - `scikit-build gihub issue #363`_
-
+* Exporting shared library that depends on object library fails - `cmake export targets issue #18935`_
 
 Attributions
 ============
@@ -756,7 +799,7 @@ References
 * `install cmake components (1)`_
 * `install cmake components (2)`_
 * `LLVM Code Style`_
-* Miniconda_
+* miniconda_
 * `opencv from pypi`_
 * pybind11_
 * `pyinstaller specs`_
@@ -785,7 +828,7 @@ References
 .. _`install cmake components (1)`: https://stackoverflow.com/a/9192877
 .. _`install cmake components (2)`: https://stackoverflow.com/a/21853784
 .. _`LLVM Code Style`: https://llvm.org/docs/CodingStandards.html
-.. _Miniconda: https://conda.io/miniconda.html
+.. _miniconda: https://conda.io/miniconda.html
 .. _`Multi Machine Vagrant File`: https://www.vagrantup.com/docs/multi-machine/
 .. _`opencv from pypi` : https://files.pythonhosted.org/packages/37/49/874d119948a5a084a7ebe98308214098ef3471d76ab74200f9800efeef15/opencv_python-4.0.0.21-cp36-cp36m-manylinux1_x86_64.whl
 .. _pybind11: https://pybind11.readthedocs.io/en/stable/
