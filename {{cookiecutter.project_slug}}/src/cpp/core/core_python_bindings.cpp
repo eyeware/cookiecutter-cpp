@@ -17,13 +17,7 @@ PYBIND11_MODULE(core, module) {
   module.doc() = "C++ python bindings generated with pybind11";
   module.attr("__name__") = "core";
 
-  using namespace {
-    { cookiecutter.project_namespace }
-  }
-  ::{
-    { cookiecutter.project_slug }
-  }
-  ::core;
+  using namespace {{ cookiecutter.project_namespace }}::{{ cookiecutter.project_slug }}::core;
 
   py::class_<A>(module, "A")
       // constructors

@@ -8,13 +8,9 @@
 // private include
 #include "E.h"
 
-namespace {
-{ cookiecutter.project_namespace }
-}
+namespace {{ cookiecutter.project_namespace }}
 {
-  namespace {
-  { cookiecutter.project_slug }
-  }
+  namespace {{ cookiecutter.project_slug }}
   {
     namespace core {
 

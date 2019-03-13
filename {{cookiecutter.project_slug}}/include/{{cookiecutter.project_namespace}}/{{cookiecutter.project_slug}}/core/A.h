@@ -10,13 +10,9 @@
 #include <memory>
 #include <string>
 
-namespace {
-{ cookiecutter.project_namespace }
-}
+namespace {{ cookiecutter.project_namespace }}
 {
-  namespace {
-  { cookiecutter.project_slug }
-  }
+  namespace {{ cookiecutter.project_slug }}
   {
     namespace core {
 

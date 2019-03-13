@@ -6,13 +6,9 @@
 #ifndef {{cookiecutter.project_namespace | upper }}_{{cookiecutter.project_slug | upper }}_B_H
 #define {{cookiecutter.project_namespace | upper }}_{{cookiecutter.project_slug | upper }}_B_H
 
-namespace {
-{ cookiecutter.project_namespace }
-}
+namespace {{ cookiecutter.project_namespace }}
 {
-  namespace {
-  { cookiecutter.project_slug }
-  }
+  namespace {{ cookiecutter.project_slug }}
   {
     namespace core {
 

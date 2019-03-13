@@ -10,13 +10,9 @@
 
 // This is a private class, it is not exposed to the public API of the project.
 
-namespace {
-{ cookiecutter.project_namespace }
-}
+namespace {{ cookiecutter.project_namespace }}
 {
-  namespace {
-  { cookiecutter.project_slug }
-  }
+  namespace {{ cookiecutter.project_slug }}
   {
     namespace core {
     namespace detail {
