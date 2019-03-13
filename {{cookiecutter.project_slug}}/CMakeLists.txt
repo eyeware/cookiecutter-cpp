@@ -17,6 +17,11 @@ option(BUILD_PYTHON_SWIG "Build swig python bindings." OFF)
 option(BUILD_DOC "Build code documentation using Doxygen." OFF)
 option(BUILD_TESTS "Build project tests" ON)
 
+option(ENABLE_CXX_COVERAGE_GCOVR_HTML_REPORTS "Generate gcovr html reports for test coverage." ON)
+option(ENABLE_CXX_COVERAGE_GCOVR_COBERTURA_XML_REPORTS "Generate cobertura xml reports for test coverage." OFF)
+option(ENABLE_CXX_COVERAGE_LCOV_HTML_REPORTS "Generate html reports for test coverage." OFF)
+option(ENABLE_CXX_COVERAGE_LCOV_COBERTURA_XML_REPORTS "Generate cobertura xml reports for test coverage." OFF) # TODO:
+
 # INSTALL_FOR_PYPI means that the libs go under the package
 option(INSTALL_FOR_PYPI "Install libraries and python bindings inside the python package." OFF)
 
@@ -169,9 +174,22 @@ if(BUILD_TESTS)
 
   # Enable only coverage in Debug mode, avoid adding debug symbols for Release mode.
   if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    # TODO: check per test coverage or coverage all tests.
-    setup_target_for_coverage_gcovr_html(NAME coverage EXECUTABLE ${PROJECT_TEST_TARGET})
-    # setup_target_for_coverage_gcovr_html(NAME coverage EXECUTABLE module1_test )
+    # TODO: coverage runs all tests, consider spliting tests per module/package.
+
+    if(ENABLE_CXX_COVERAGE_GCOVR_HTML_REPORTS)
+      setup_target_for_coverage_gcovr_html(NAME coverage/gcovr/html 
+        EXECUTABLE ${PROJECT_TEST_TARGET}
+        DEPENDENCIES ${PROJECT_TEST_TARGET}
+      )
+    endif()
+
+    if(ENABLE_CXX_COVERAGE_GCOVR_COBERTURA_XML_REPORTS)
+      setup_target_for_coverage_gcovr_xml(NAME coverage/gcovr/cobertura-xml 
+        EXECUTABLE ${PROJECT_TEST_TARGET}
+        DEPENDENCIES ${PROJECT_TEST_TARGET}
+      )
+    endif()
+
   endif()
 
 

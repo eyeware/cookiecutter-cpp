@@ -171,6 +171,17 @@ Project Options
 +-------------------------------------------------+---------+-----------------------------------------------------+----------+
 | CMAKE_INSTALL_PREFIX                            | project | project installation prefix                         |          |
 +-------------------------------------------------+---------+-----------------------------------------------------+----------+
+| ENABLE_CXX_COVERAGE_GCOVR_HTML_REPORTS          | project | Generate gcovr_ html reports for test coverage      | ON       |
++-------------------------------------------------+---------+-----------------------------------------------------+----------+
+| ENABLE_CXX_COVERAGE_GCOVR_COBERTURA_XML_REPORTS | project | Generate gcovr_ cobertura xml reports for test      | OFF      |
+|                                                 |         | coverage.                                           |          |
++-------------------------------------------------+---------+-----------------------------------------------------+----------+
+| ENABLE_CXX_COVERAGE_LCOV_HTML_REPORTS           | project | Generate lcov_ html reports for test coverage       | (TODO)   |
++-------------------------------------------------+---------+-----------------------------------------------------+----------+
+| ENABLE_CXX_COVERAGE_LCOV_COBERTURA_XML_REPORTS  | project | Generate lcov_ cobertura xml reports for test       | (TODO)   |
+|                                                 |         | coverage.                                           |          |
++-------------------------------------------------+---------+-----------------------------------------------------+----------+
+
 
 
 
@@ -672,6 +683,20 @@ Windows
 
 C++ - Dynamic Code Checks
 =========================
+
+
+Code Coverage
+-------------
+
+cobertura xml format is the "standard" way to report code coverage.
+
+.. _gcovr : https://gcovr.com/
+.. _lcov : http://ltp.sourceforge.net/coverage/lcov.php
+
+* gcovr_ - supports cobertura xml reports.
+* lcov_ - older than gcovr, with different features. (does not support cobertura xml reports) TODO:
+* lcov-to-cobertura-xml - https://github.com/eriwen/lcov-to-cobertura-xml - https://pypi.org/project/lcov_cobertura/
+
 
 Linux
 -----
