@@ -125,7 +125,6 @@ if(BUILD_PYTHON_PYBIND11 OR BUILD_PYTHON_SWIG)
     set(PROJECT_INSTALL_LIBDIR ${PROJECT_INSTALL_PYTHON_SITEARCH}/${CMAKE_INSTALL_LIBDIR}/${PROJECT_PREFIX})
   endif()
 
-  message("PROJECT_INSTALL_PYTHON_PACKAGE_MODE:${PROJECT_INSTALL_PYTHON_PACKAGE_MODE}")
   message("PROJECT_INSTALL_PYTHON_SITEARCH:${PROJECT_INSTALL_PYTHON_SITEARCH}")
   message("PROJECT_INSTALL_LIBDIR:${PROJECT_INSTALL_LIBDIR}")
 
@@ -179,14 +178,14 @@ if(BUILD_TESTS)
     # TODO: coverage runs all tests, consider spliting tests per module/package.
 
     if(ENABLE_CXX_COVERAGE_GCOVR_HTML_REPORTS)
-      setup_target_for_coverage_gcovr_html(NAME coverage/gcovr/html 
+      setup_target_for_coverage_gcovr_html(NAME coverage_gcovr_html 
         EXECUTABLE ${PROJECT_TEST_TARGET}
         DEPENDENCIES ${PROJECT_TEST_TARGET}
       )
     endif()
 
     if(ENABLE_CXX_COVERAGE_GCOVR_COBERTURA_XML_REPORTS)
-      setup_target_for_coverage_gcovr_xml(NAME coverage/gcovr/cobertura-xml 
+      setup_target_for_coverage_gcovr_xml(NAME coverage_gcovr_cobertura_xml 
         EXECUTABLE ${PROJECT_TEST_TARGET}
         DEPENDENCIES ${PROJECT_TEST_TARGET}
       )

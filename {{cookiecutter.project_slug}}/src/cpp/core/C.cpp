@@ -5,58 +5,48 @@
 
 #include "{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/C.h"
 
-namespace {{cookiecutter.project_namespace}} {
-namespace {{cookiecutter.project_slug}} {
-namespace core {
-
-// constructors
-C::C() {
+namespace {
+{ cookiecutter.project_namespace }
 }
+{
+  namespace {
+  { cookiecutter.project_slug }
+  }
+  {
+    namespace core {
 
-C::C(bool booly) : m_booly(booly) {
-}
+    // constructors
+    C::C() {}
 
-// copy constructor
-C::C(const C& other) : m_booly(other.m_booly) {
-}
+    C::C(bool booly) : m_booly(booly) {}
 
-// copy assignment operator
-C& C::operator=(const C& other) {
-    if(this != &other)
-    {
+    // copy constructor
+    C::C(const C &other) : m_booly(other.m_booly) {}
+
+    // copy assignment operator
+    C &C::operator=(const C &other) {
+      if (this != &other) {
         m_booly = other.m_booly;
+      }
+
+      return *this;
     }
 
-    return *this;
-}
+    // destructor
+    C::~C() {}
 
-// destructor
-C::~C() {
-}
+    // getter
+    const bool C::get_booly() const { return m_booly; }
 
-// getter
-const bool C::get_booly() const
-{
-    return m_booly;
-}
+    // overloaded functions
+    std::string C::overloadMethod(A a) { return "A"; }
 
-// overloaded functions
-std::string C::overloadMethod(A a) {
-    return "A";
-}
+    std::string C::overloadMethod(B b) { return "B"; }
 
-std::string C::overloadMethod(B b) {
-    return "B";
-}
+    std::string C::overloadMethod(A a, B b) { return "A_B"; }
 
-std::string C::overloadMethod(A a, B b) {
-    return "A_B";
-}
+    std::string C::overloadMethod(A a, C c) { return "A_C"; }
 
-std::string C::overloadMethod(A a, C c) {
-    return "A_C";
-}
-
-} // namespace core
-} // namespace {{cookiecutter.project_slug}}
+    } // namespace core
+  }   // namespace {{cookiecutter.project_slug}}
 } // namespace {{cookiecutter.project_namespace}}
