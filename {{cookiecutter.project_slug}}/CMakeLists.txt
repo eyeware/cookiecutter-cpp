@@ -166,6 +166,8 @@ add_subdirectory(src/cpp/core)
 # Setup tests and checks
 # ------------------------------------------------------------------------------
 
+include(clang-format) # add clang format targets.
+
 if(BUILD_TESTS)
  
   find_package(Catch2 2.6 REQUIRED)

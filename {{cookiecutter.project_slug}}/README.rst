@@ -677,6 +677,21 @@ TODO: https://blog.kitware.com/static-checks-with-cmake-cdash-iwyu-clang-tidy-lw
 Linux
 -----
 
+Code Style
+~~~~~~~~~~
+
+* target *check-format*     - checks the formating of C++ modified source files before commit.
+* target *check-all-format* - checks the formating of C++ all source files.
+* target *format*           - reformat C++ modified source files before commit.
+* target *format-all*       - reformat C++ all source files.
+
+
+::
+
+    cd build
+    cmake --build . --target <target-name>
+
+
 Windows
 -------
 
