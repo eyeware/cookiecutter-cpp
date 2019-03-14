@@ -166,6 +166,7 @@ add_subdirectory(src/cpp/core)
 # ------------------------------------------------------------------------------
 
 include(clang-format) # add clang format targets.
+include(iwyu) # include what you use checks
 
 if(BUILD_TESTS)
  
@@ -173,25 +174,6 @@ if(BUILD_TESTS)
 
   enable_testing()
 
-  # Enable only coverage in Debug mode, avoid adding debug symbols for Release mode.
-  if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-    # TODO: coverage runs all tests, consider spliting tests per module/package.
-
-    if(ENABLE_CXX_COVERAGE_GCOVR_HTML_REPORTS)
-      setup_target_for_coverage_gcovr_html(NAME coverage_gcovr_html 
-        EXECUTABLE ${PROJECT_TEST_TARGET}
-        DEPENDENCIES ${PROJECT_TEST_TARGET}
-      )
-    endif()
-
-    if(ENABLE_CXX_COVERAGE_GCOVR_COBERTURA_XML_REPORTS)
-      setup_target_for_coverage_gcovr_xml(NAME coverage_gcovr_cobertura_xml 
-        EXECUTABLE ${PROJECT_TEST_TARGET}
-        DEPENDENCIES ${PROJECT_TEST_TARGET}
-      )
-    endif()
-
-  endif()
 
 
   # Add here additional source files
@@ -201,6 +183,26 @@ if(BUILD_TESTS)
 
   # make sure you execute "conan install .." in the build directory
   target_link_libraries(${PROJECT_TEST_TARGET} PRIVATE Catch2::Catch2)
+
+  # Enable only coverage in Debug mode, avoid adding debug symbols for Release mode.
+  if (CMAKE_BUILD_TYPE STREQUAL "Debug")
+    # TODO: coverage runs all tests, consider spliting tests per module/package.
+
+    if(ENABLE_CXX_COVERAGE_GCOVR_HTML_REPORTS)
+      setup_target_for_coverage_gcovr_html(NAME coverage_gcovr_html 
+        EXECUTABLE $<TARGET_FILE:${PROJECT_TEST_TARGET}>
+        DEPENDENCIES ${PROJECT_TEST_TARGET}
+      )
+    endif()
+
+    if(ENABLE_CXX_COVERAGE_GCOVR_COBERTURA_XML_REPORTS)
+      setup_target_for_coverage_gcovr_xml(NAME coverage_gcovr_cobertura_xml 
+        EXECUTABLE $<TARGET_FILE:${PROJECT_TEST_TARGET}>
+        DEPENDENCIES ${PROJECT_TEST_TARGET}
+      )
+    endif()
+
+  endif()
 
   # there is no way for ctest to display test output on failure from whithim cmake
   # so add this custom command.
