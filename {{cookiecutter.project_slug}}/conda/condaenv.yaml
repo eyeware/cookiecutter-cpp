@@ -4,13 +4,14 @@ channels:
   - defaults
 dependencies:
   - cookiecutter=1.6
-# --- C++ dependencies ---
+# --- C++ build dependencies ---
   - catch2=2.6
   - cmake=3.13
   - ninja=1.9
   - scikit-build=0.8
   - bump2version=0.5.8
   - python=3.6
+  - valgrind=3.14
 # --- dev dependencies ---
   - pybind11=2.2
   - swig=3.0
