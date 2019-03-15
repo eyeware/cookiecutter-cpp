@@ -16,4 +16,5 @@
 
 apt-get install -y lcov gcovr
 apt-get install -y gcc-5
-apt-get install -y clang-3.8 iwyu clang-format-3.8 clang-tidy-3.8 
+apt-get install -y clang-3.8 iwyu clang-format-3.8 clang-tidy-3.8
+apt-get install -y kwstyle
