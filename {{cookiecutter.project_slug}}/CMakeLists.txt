@@ -210,15 +210,26 @@ if(BUILD_TESTS)
   # https://stackoverflow.com/a/36729074
   # https://stackoverflow.com/a/31124523
   add_custom_target(check_tests 
-      COMMAND ${CMAKE_COMMAND} -E echo CWD=${CMAKE_BINARY_DIR}
-      COMMAND ${CMAKE_COMMAND} -E echo CMD=${CMAKE_CTEST_COMMAND} -C $<CONFIG>
-      COMMAND ${CMAKE_COMMAND} -E echo ----------------------------------
-      COMMAND ${CMAKE_COMMAND} -E env CTEST_OUTPUT_ON_FAILURE=1
-          ${CMAKE_CTEST_COMMAND} -C $<CONFIG> 
-          WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-          DEPENDS ${PROJECT_TEST_TARGET}
+    COMMAND ${CMAKE_COMMAND} -E echo CWD=${CMAKE_BINARY_DIR}
+    COMMAND ${CMAKE_COMMAND} -E echo CMD=${CMAKE_CTEST_COMMAND} -C $<CONFIG>
+    COMMAND ${CMAKE_COMMAND} -E echo ----------------------------------
+    COMMAND ${CMAKE_COMMAND} -E env CTEST_OUTPUT_ON_FAILURE=1
+      ${CMAKE_CTEST_COMMAND} -C $<CONFIG> 
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+      DEPENDS ${PROJECT_TEST_TARGET}
   )
 
+  # Adding test target to report junit xml test results.
+  set(PROJECT_TEST_JUNIT_REPORT_TARGET ${PROJECT_TEST_TARGET}_junit_xml_report)
+  set(PROJECT_TEST_JUNIT_REPORT ${PROJECT_TEST_JUNIT_REPORT_TARGET}.xml)
+
+  add_custom_target(${PROJECT_TEST_JUNIT_REPORT_TARGET}
+    COMMAND ${CMAKE_COMMAND} -E echo CWD=${CMAKE_BINARY_DIR}
+    COMMAND ${CMAKE_COMMAND} -E echo Creating junit report in: ${CMAKE_BINARY_DIR}/${PROJECT_TEST_JUNIT_REPORT}
+    COMMAND ${CMAKE_COMMAND} -E echo ----------------------------------
+    COMMAND $<TARGET_FILE:${PROJECT_TEST_TARGET}> -r junit -o ${PROJECT_TEST_JUNIT_REPORT}
+    DEPENDS ${PROJECT_TEST_TARGET}
+  )
   
   # catch2 --list-* in the exit code returns the number of elements
   # causing cmake to fail, this hack is to avoid the fail.
@@ -234,9 +245,9 @@ if(BUILD_TESTS)
   
   # list catch2 tests and labels.
   add_custom_target(list_tests 
-      COMMAND $<TARGET_FILE:${PROJECT_TEST_TARGET}>  ${CUSTOM_COMMAND_SUCCESS} --list-tests
-          WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-          DEPENDS ${PROJECT_TEST_TARGET}
+    COMMAND $<TARGET_FILE:${PROJECT_TEST_TARGET}>  ${CUSTOM_COMMAND_SUCCESS} --list-tests
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+      DEPENDS ${PROJECT_TEST_TARGET}
   )
 
 
