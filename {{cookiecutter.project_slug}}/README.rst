@@ -680,10 +680,28 @@ Linux
 Code Style
 ~~~~~~~~~~
 
+clang-format
+
 * target *check-format*     - checks the formating of C++ modified source files before commit.
 * target *check-all-format* - checks the formating of C++ all source files.
 * target *format*           - reformat C++ modified source files before commit.
 * target *format-all*       - reformat C++ all source files.
+
+clang-tidy
+
+TODO: add target.
+
+.. _readability-identifier-naming : https://clang.llvm.org/extra/clang-tidy/checks/readability-identifier-naming.html
+
+* naming checks
+https://clang.llvm.org/extra/clang-tidy/checks/readability-identifier-naming.html
+
+The naming conventions used by the project for C++. To modify refer to
+.clang-tidy in the project root and to readability-identifier-naming_.
+
+.. code-block:: cpp
+
+.. include:: format_example.cpp
 
 
 ::
