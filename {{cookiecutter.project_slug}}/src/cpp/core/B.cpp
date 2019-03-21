@@ -5,35 +5,33 @@
 
 #include "{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/B.h"
 
-namespace {{ cookiecutter.project_namespace }}
-{
-  namespace {{ cookiecutter.project_slug }}
-  {
-    namespace core {
+namespace {{ cookiecutter.project_namespace }} {
+namespace {{ cookiecutter.project_slug }} {
+namespace core {
 
-    // constructors
-    B::B() {}
+// constructors
+B::B() {}
 
-    B::B(int number) : m_private(number) {}
+B::B(int number) : m_private(number) {}
 
-    // copy constructor
-    B::B(const B &other) : m_private(other.m_private) {}
+// copy constructor
+B::B(const B &other) : m_private(other.m_private) {}
 
-    // copy assignment operator
-    B &B::operator=(const B &other) {
-      if (this != &other) {
+// copy assignment operator
+B &B::operator=(const B &other) {
+    if (this != &other) {
         m_private = other.m_private;
-      }
-
-      return *this;
     }
 
-    // destructor
-    B::~B() {}
+    return *this;
+}
 
-    // getter
-    const int B::get_private() const { return m_private; }
+// destructor
+B::~B() {}
 
-    } // namespace core
-  }   // namespace {{cookiecutter.project_slug}}
+// getter
+const int B::get_private() const { return m_private; }
+
+} // namespace core
+} // namespace {{cookiecutter.project_slug}}
 } // namespace {{cookiecutter.project_namespace}}
