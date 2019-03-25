@@ -5,5 +5,6 @@
 
 CLANG_FORMAT_CPP_FILES_REGEX=".*\.(c|h|cpp|hpp|cxx)$"
 
-find -regextype posix-extended -regex ${CLANG_FORMAT_CPP_FILES_REGEX} \
--exec clang-format -style=file -i {} \;
+{ git diff --name-only --diff-filter=ACMRT; git diff --name-only --diff-filter=ACRMT --cached; } | \ 
+grep -E ${CLANG_FORMAT_CPP_FILES_REGEX} | \
+xargs -n 1 clang-format -style=file -i

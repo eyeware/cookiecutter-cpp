@@ -1,3 +1,4 @@
+#!/bin/bash
 # clang-format functions to use in project targets
 # this is required to avoid limitations of shell escaping caracters in
 # custom targets.

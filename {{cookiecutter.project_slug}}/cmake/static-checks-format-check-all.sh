@@ -1,10 +1,8 @@
+#!/bin/bash
 # clang-format functions to use in project targets
 # this is required to avoid limitations of shell escaping caracters in
 # custom targets.
 # FIXME: https://gitlab.kitware.com/cmake/cmake/issues/18062
-
-
-CLANG_FORMAT_PATH=$(which clang-format)
 
 CLANG_FORMAT_CPP_FILES_REGEX=".*\.(c|h|cpp|hpp|cxx)$"
 

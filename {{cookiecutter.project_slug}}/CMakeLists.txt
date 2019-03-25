@@ -165,16 +165,16 @@ add_subdirectory(src/cpp/core)
 # Setup tests and checks
 # ------------------------------------------------------------------------------
 
-include(clang-format) # add clang format targets.
-include(iwyu) # include what you use checks
+include(static-checks) # add clang format targets.
+include(clang-tidy) # add clang format targets.
+#include(iwyu) # include what you use checks, this bloats the dev environment 
+# with all the clang toolchain.
 
 if(BUILD_TESTS)
  
   find_package(Catch2 2.6 REQUIRED)
 
   enable_testing()
-
-
 
   # Add here additional source files
   add_executable(${PROJECT_TEST_TARGET} 
