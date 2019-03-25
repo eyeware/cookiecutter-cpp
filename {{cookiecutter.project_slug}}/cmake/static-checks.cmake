@@ -3,16 +3,20 @@
 # Add clang-format custom targets.
 # Assumes git is being used.
 
-set(STATIC_CHECK_PROGRAMS 
-  clang-format
-#  clang-tidy
+set(STATIC_CHECK_FORMAT_PROGRAM_NAMES
+  clang-format clang-format-6.0
 )
 
-foreach(STATIC_CHECK_PROGRAM IN LISTS STATIC_CHECK_PROGRAMS)
-  find_program(STATIC_CHECK_PROGRAM_PATH ${STATIC_CHECK_PROGRAM})
+
+set(STATIC_CHECK_TYPES FORMAT) # NAMING)
+
+#  clang-tidy
+
+foreach(STATIC_CHECK_TYPE IN LISTS STATIC_CHECK_TYPES)
+  find_program(STATIC_CHECK_PROGRAM_PATH NAMES ${STATIC_CHECK_${STATIC_CHECK_TYPE}_PROGRAM_NAMES})
 
   if(NOT STATIC_CHECK_PROGRAM_PATH)
-    message(WARNING "${STATIC_CHECK_PROGRAM}: not found!")
+    message(WARNING "${STATIC_CHECK_${STATIC_CHECK_TYPE}_PROGRAM_NAMES}: not found!")
   endif()
 endforeach()
 
@@ -71,7 +75,7 @@ foreach(index RANGE ${STATIC_CHECK_TARGETS_LENGTH1})
   add_custom_target(
       ${STATIC_CHECK_TARGET}
       COMMAND
-      ${CMAKE_CURRENT_LIST_DIR}/clang-format-${CLANG_FORMAT_TARGET}.sh
+      ${CMAKE_CURRENT_LIST_DIR}/static-checks-${STATIC_CHECK_TARGET}.sh
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
       COMMENT ${STATIC_CHECK_TARGET_COMMENT}
   )

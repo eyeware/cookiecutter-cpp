@@ -4,12 +4,22 @@
 # custom targets.
 # FIXME: https://gitlab.kitware.com/cmake/cmake/issues/18062
 
+CLANG_FORMAT_NAMES=(clang-format-6.0 clang-format-5.0 clang-format)
+
+for CLANG_FORMAT_NAME in "${CLANG_FORMAT_NAMES[@]}"
+do
+  CLANG_FORMAT_PATH=$(which $CLANG_FORMAT_NAME)
+  if [ -n "$CLANG_FORMAT_PATH" ]; then
+    break
+  fi
+done
+
 CLANG_FORMAT_CPP_FILES_REGEX=".*\.(c|h|cpp|hpp|cxx)$"
 
 tempfile=$(mktemp)
 { git diff --name-only --diff-filter=ACMRT; git diff --name-only --diff-filter=ACRMT --cached; } | \
 grep -E ${CLANG_FORMAT_CPP_FILES_REGEX} | \
-xargs -n 1 -i bash -c "clang-format -style=file -output-replacements-xml {} | grep -qE '<replacement offset=' && echo {} > $tempfile"
+xargs -n 1 -i bash -c "$CLANG_FORMAT_PATH -style=file -output-replacements-xml {} | grep -qE '<replacement offset=' && echo {} > $tempfile"
 cat $tempfile | grep ".*"
 exitcode=$?
 rm $tempfile
