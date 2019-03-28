@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # @author: Mario Costa
-# @date: 06/11/2018
+# @date: 2018/11/06
  
-# Ubunto development environment bootstrap script
+# Ubuntu development environment bootstrap script
 
 #------------------------------------------------------------------------------
 #            NOTE: DO NOT ADD LIBRARY DEPENDENCIES TO THIS FILE
@@ -14,7 +14,5 @@
 # packages.
 #------------------------------------------------------------------------------
 
-apt-get install -y lcov
-apt-get install -y gcc-7
-apt-get install -y clang-format-6.0 clang-tidy-6.0
-#iwyu
+apt-get install -y gcc g++ g++7 gcc-7
+apt-get install -y clang-format-6.0 clang-tidy-6.0 iwyu

@@ -1,0 +1,3 @@
+# add here environment specific variables, see dockcross .dockcross project file
+conda activate --stack {{cookiecutter.project_slug}}
+

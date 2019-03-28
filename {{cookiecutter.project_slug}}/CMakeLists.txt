@@ -220,7 +220,7 @@ if(BUILD_TESTS)
   )
 
   # Adding test target to report junit xml test results.
-  set(PROJECT_TEST_JUNIT_REPORT_TARGET ${PROJECT_TEST_TARGET}_junit_xml_report)
+  set(PROJECT_TEST_JUNIT_REPORT_TARGET ${PROJECT_TEST_TARGET}_junit_report)
   set(PROJECT_TEST_JUNIT_REPORT ${PROJECT_TEST_JUNIT_REPORT_TARGET}.xml)
 
   add_custom_target(${PROJECT_TEST_JUNIT_REPORT_TARGET}
