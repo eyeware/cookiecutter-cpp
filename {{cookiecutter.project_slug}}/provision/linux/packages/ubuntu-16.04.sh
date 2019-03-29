@@ -27,5 +27,5 @@ apt-get update -y && \
         valgrind \
         iwyu && \
     apt-get clean -y && \
-    apt-get autoremove --purge -y && \
+    apt-get autoremove --purge -y
 

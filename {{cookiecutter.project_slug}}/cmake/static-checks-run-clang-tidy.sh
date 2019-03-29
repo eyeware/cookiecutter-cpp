@@ -1,8 +1,6 @@
 #!/bin/bash
 # Wrapper script, that forces -1 result if theres any check that fails 
 
-set -x
-
 FIND_PROGRAM_NAMES=(run-clang-tidy-6.0.py)
 
 for FIND_PROGRAM_NAME in "${FIND_PROGRAM_NAMES[@]}"

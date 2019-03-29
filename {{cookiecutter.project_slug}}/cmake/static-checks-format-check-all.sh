@@ -4,18 +4,23 @@
 # custom targets.
 # FIXME: https://gitlab.kitware.com/cmake/cmake/issues/18062
 
-CLANG_FORMAT_NAMES=(clang-format-6.0 clang-format-5.0 clang-format)
+FIND_PROGRAM_NAMES=(clang-format-6.0 clang-format-5.0 clang-format)
 
-for CLANG_FORMAT_NAME in "${CLANG_FORMAT_NAMES[@]}"
+for FIND_PROGRAM_NAME in "${FIND_PROGRAM_NAMES[@]}"
 do
-  CLANG_FORMAT_PATH=$(which $CLANG_FORMAT_NAME)
-  if [ -n "$CLANG_FORMAT_PATH" ]; then
+  FIND_PROGRAM_NAME_PATH=$(which $FIND_PROGRAM_NAME)
+  if [ -n "$FIND_PROGRAM_NAME_PATH" ]; then
     break
   fi
 done
 
+if [ -z "$FIND_PROGRAM_NAME_PATH" ]; then
+  echo "Program with names ${FIND_PROGRAM_NAMES[@]} not found!"
+  exit -1
+fi
+
 CLANG_FORMAT_CPP_FILES_REGEX=".*\.(c|h|cpp|hpp|cxx)$"
 
 ! find -regextype posix-extended -regex ${CLANG_FORMAT_CPP_FILES_REGEX} \
--exec bash -c "$CLANG_FORMAT_PATH -style=file -output-replacements-xml {} | grep -qE '<replacement offset=' " \; -print | \
+-exec bash -c "$FIND_PROGRAM_NAME_PATH -style=file -output-replacements-xml {} | grep -qE '<replacement offset=' " \; -print | \
 grep ".*"

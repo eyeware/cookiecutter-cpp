@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # TODO: this required to edit the script when the version changed due to md5 check.
-CONDA_VER="4.5.12"
+CONDA_VER="4.5.11"
 
 CONDA_HOME=/opt/conda
 
@@ -9,7 +9,7 @@ CONDA_HOME=/opt/conda
 if [ ! -d $CONDA_HOME ]; then
     echo "Downloading and Installing Miniconda3"
     curl -s -L https://repo.continuum.io/miniconda/Miniconda3-${CONDA_VER}-Linux-x86_64.sh > miniconda.sh && \
-    echo 4be03f925e992a8eda03758b72a77298 miniconda.sh | md5sum -c && \
+    echo e1045ee415162f944b6aebfe560b8fee miniconda.sh | md5sum -c && \
     bash miniconda.sh -b -p $CONDA_HOME && \
     rm miniconda.sh && \
     touch $CONDA_HOME/conda-meta/pinned && \
