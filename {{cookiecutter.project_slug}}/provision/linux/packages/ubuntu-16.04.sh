@@ -14,7 +14,18 @@
 # packages.
 #------------------------------------------------------------------------------
 
-apt-get install -y lcov
-apt-get install -y gcc-5
-apt-get install -y clang-3.8 iwyu clang-format-3.8 clang-tidy-3.8
-apt-get install -y kwstyle
+apt-get update -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+        vim \
+        g++ \
+        gcc \
+        g++-7 \
+        gcc-7 \
+        clang-tools-6.0 \
+        clang-tidy-6.0 \
+        clang-format-6.0 \
+        valgrind \
+        iwyu && \
+    apt-get clean -y && \
+    apt-get autoremove --purge -y && \
+

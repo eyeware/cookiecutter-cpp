@@ -3,10 +3,26 @@ channels:
   - conda-forge
   - defaults
 dependencies:
+# Dev tools
+  - bump2version=0.5.8
+  - cookiecutter=1.6
+# C++ dev tools
+  - pyyaml
+  - cmake=3.13
+  - ninja=1.9
+# Python dev tools
+  - scikit-build=0.8
+  - flake8=3.7
+  - coverage=4.5
+  - pytest
+  - pytest-cov
+  - pytest-xdist
 # C++ project dependencies
   - catch2=2.6
   - pybind11=2.2
   - swig=3.0
   - eigen=3.3
 # Python project dependencies
+  - pip:
+    - gcovr==4.1
 

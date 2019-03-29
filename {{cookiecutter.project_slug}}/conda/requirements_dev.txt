@@ -1,0 +1,9 @@
+# https://pip.pypa.io/en/stable/reference/pip_install/#requirements-file-format
+# Project only dependencies
+# <channel>::package_name 
+# C++ project dependencies
+conda-forge::catch2=2.6.1
+conda-forge::pybind11=2.2.4
+conda-forge::swig=3.0.12
+conda-forge::eigen=3.3.7
+
