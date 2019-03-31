@@ -10,6 +10,7 @@ dependencies:
   - pyyaml
   - cmake=3.13
   - ninja=1.9
+  - gcovr=4.1
 # Python dev tools
   - scikit-build=0.8
   - flake8=3.7
@@ -22,7 +23,3 @@ dependencies:
   - pybind11=2.2
   - swig=3.0
   - eigen=3.3
-# Python project dependencies
-  - pip:
-    - gcovr==4.1
-

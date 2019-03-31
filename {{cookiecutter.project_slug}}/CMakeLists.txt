@@ -18,7 +18,7 @@ option(BUILD_DOC "Build code documentation using Doxygen." OFF)
 option(BUILD_TESTS "Build project tests" ON)
 
 option(ENABLE_CXX_COVERAGE_GCOVR_HTML_REPORTS "Generate gcovr html reports for test coverage." ON)
-option(ENABLE_CXX_COVERAGE_GCOVR_COBERTURA_XML_REPORTS "Generate cobertura xml reports for test coverage." OFF)
+option(ENABLE_CXX_COVERAGE_GCOVR_COBERTURA_XML_REPORTS "Generate cobertura xml reports for test coverage." ON)
 option(ENABLE_CXX_COVERAGE_LCOV_HTML_REPORTS "Generate html reports for test coverage." OFF)
 option(ENABLE_CXX_COVERAGE_LCOV_COBERTURA_XML_REPORTS "Generate cobertura xml reports for test coverage." OFF) # TODO:
 
@@ -58,6 +58,10 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # NOTE: add target_link_libraries(${PROJECCT_NAME} <module name>) in each
 # module CMakeLists.
 add_library(${PROJECT_NAME} INTERFACE)
+
+# default setup of the project instalation folders
+set(PROJECT_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_PREFIX})
+set(PROJECT_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR}/${PROJECT_PREFIX})
 
 if(BUILD_PYTHON_PYBIND11 OR BUILD_PYTHON_SWIG)
 
@@ -105,9 +109,6 @@ if(BUILD_PYTHON_PYBIND11 OR BUILD_PYTHON_SWIG)
     endif()
   endif()
 
-  # default setup of the project instalation folders
-  set(PROJECT_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_PREFIX})
-  set(PROJECT_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR}/${PROJECT_PREFIX})
   set(PROJECT_INSTALL_PYTHON_SITEARCH ${CMAKE_INSTALL_LIBDIR}/${CMAKE_INSTALL_PYTHON_SITEARCH}/${PROJECT_PREFIX})
 
   if(INSTALL_FOR_PYPI)
