@@ -21,5 +21,5 @@ fi
 
 CLANG_FORMAT_CPP_FILES_REGEX=".*\.(c|h|cpp|hpp|cxx)$"
 
-find -regextype posix-extended -regex ${CLANG_FORMAT_CPP_FILES_REGEX} \
--exec $FIND_PROGRAM_NAME_PATH -style=file -i {} \;
+git ls-files | grep -E ${CLANG_FORMAT_CPP_FILES_REGEX} | \
+xargs -I{} -n1 $FIND_PROGRAM_NAME_PATH -style=file -i {}

@@ -21,6 +21,6 @@ fi
 
 CLANG_FORMAT_CPP_FILES_REGEX=".*\.(c|h|cpp|hpp|cxx)$"
 
-! find -regextype posix-extended -regex ${CLANG_FORMAT_CPP_FILES_REGEX} \
--exec bash -c "$FIND_PROGRAM_NAME_PATH -style=file -output-replacements-xml {} | grep -qE '<replacement offset=' " \; -print | \
+! git ls-files | grep -E ${CLANG_FORMAT_CPP_FILES_REGEX} | \
+xargs -I{} -n1 bash -c "$FIND_PROGRAM_NAME_PATH -style=file -output-replacements-xml {} | grep -qE '<replacement offset=' && echo {} " | \
 grep ".*"

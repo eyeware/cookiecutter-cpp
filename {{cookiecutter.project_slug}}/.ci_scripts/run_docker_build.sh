@@ -24,8 +24,10 @@ cmake .. -G Ninja -DBUILD_PYTHON_PYBIND11=OFF -DCMAKE_BUILD_TYPE=Debug
 cmake --build . --target all
 cmake --build . --target test_junit_report
 cmake --build . --target coverage_gcovr_cobertura_xml
+cmake --build . --target coverage_gcovr_html
 
 # leave this one for last
+cmake --build . --target format-check-all
 cmake --build . --target clang-tidy-junit-report 
 
 EOF
