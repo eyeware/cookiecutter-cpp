@@ -1,3 +1,0 @@
-jobs:
-- template: ./.azure-pipelines/az-cpp-linux.yml
-- template: ./.azure-pipelines/azure-cpp-win.yml
