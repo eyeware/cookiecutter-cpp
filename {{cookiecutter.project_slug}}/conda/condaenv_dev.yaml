@@ -24,5 +24,3 @@ dependencies:
   - pybind11=2.2
   - swig=3.0
   - eigen=3.3
-  - pip:
-    - pycobertura==0.10.5

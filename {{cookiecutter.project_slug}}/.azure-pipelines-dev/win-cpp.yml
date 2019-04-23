@@ -1,14 +1,10 @@
 jobs:
-- job: WinCPP
+- job: win_cpp_dev
   strategy:
     maxParallel: 4
   pool:
     vmImage: vs2017-win2016
   steps:
-  - script: |
-     choco install git 7zip
-     choco install -y vcbuildtools --version 2015.4 -ia "/Full"
-    displayName: choco deps
 
   - powershell: Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
     displayName: Add conda to PATH
@@ -17,18 +13,20 @@ jobs:
     displayName: Create Anaconda environment
 
   - script: |
-     call activate sdk
+     call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" amd64 10.0.10240.0 -vcvars_ver=14.0
+     rem cd is require because the above command changes the cwd.
+     cd \d %SYSTEM_DEFAULTWORKINGDIRECTORY%\
+
+     call activate {{cookiecutter.project_slug}}
+
      mkdir build
-     pwd
-     call "C:\Program Files (x86)\Microsoft Visual C++ Build Tools\vcbuildtools.bat" amd64
-     pwd
-     d:
-     cd $(System.DefaultWorkingDirectory)/build
-     pwd
-     REM cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Debug
+     cd build
+
+     cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Debug
      if not %errorlevel%==0 exit /b 1
-     REM cmake --build . --target all
+     cmake --build . --target all
      if not %errorlevel%==0 exit /b 1
-     REM cmake --build . --target test_junit_report
+     cmake --build . --target test_junit_report
      if not %errorlevel%==0 exit /b 1
-    displayName: cmake
+
+    displayName: Build

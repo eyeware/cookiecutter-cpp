@@ -1,5 +1,5 @@
 jobs:
-- job: LinuxPY
+- job: linux_cpp_python
   strategy:
     maxParallel: 4
   pool:
@@ -9,7 +9,7 @@ jobs:
     displayName: 'Bash Script'
     inputs:
       targetType: filePath
-      filePath: '$(System.DefaultWorkingDirectory)/.ci_scripts/run_docker_build.sh'
+      filePath: '$(System.DefaultWorkingDirectory)/.ci_scripts/run_docker_build_dev_python.sh'
       workingDirectory: '$(System.DefaultWorkingDirectory)/.ci_scripts'
 
   - task: PublishTestResults@2

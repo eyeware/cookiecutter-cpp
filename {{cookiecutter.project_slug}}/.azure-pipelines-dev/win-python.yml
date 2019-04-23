@@ -5,10 +5,6 @@ jobs:
   pool:
     vmImage: vs2017-win2016
   steps:
-  - script: |
-     choco install git 7zip
-     choco install -y vcbuildtools --version 2015.4 -ia "/Full"
-    displayName: choco deps
 
   - powershell: Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
     displayName: Add conda to PATH
@@ -17,8 +13,19 @@ jobs:
     displayName: Create Anaconda environment
 
   - script: |
-     call activate sdk
-     pwd && ls -la
+     call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build\vcvarsall.bat" amd64 10.0.10240.0 -vcvars_ver=14.0
+     rem cd is require because the above command changes the cwd.
+     cd \d %SYSTEM_DEFAULTWORKINGDIRECTORY%\
+
+     call activate {{cookiecutter.project_slug}}
+
+     python setup.py install
+     if not %errorlevel%==0 exit /b 1
+
+    displayName: Build
+
+  - script: |
+     call activate {{cookiecutter.project_slug}}
      cd tests/python && py.test . --junitxml pytest-junit.xml --cov=. . --cov-report=xml --cov-report=html
      if not %errorlevel%==0 exit /b 1
     displayName: Python tests
