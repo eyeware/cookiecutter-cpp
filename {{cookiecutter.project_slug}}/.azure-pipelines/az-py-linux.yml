@@ -1,0 +1,31 @@
+jobs:
+- job: LinuxPY
+  strategy:
+    maxParallel: 4
+  pool:
+    name: Hosted Ubuntu 1604
+  steps:
+  - task: Bash@3
+    displayName: 'Bash Script'
+    inputs:
+      targetType: filePath
+      filePath: '$(System.DefaultWorkingDirectory)/.ci_scripts/run_docker_build.sh'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/.ci_scripts'
+
+  - task: PublishTestResults@2
+    displayName: 'Publish Python Test Results pytest-junit.xml'
+    inputs:
+      testResultsFiles: 'pytest-*.xml'
+      searchFolder: '$(System.DefaultWorkingDirectory)/tests/python/'
+      failTaskOnFailedTests: true
+      testRunTitle: 'Python unit tests for Linux'
+      buildPlatform: linux
+      buildConfiguration: Debug
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish Python coverage from $(System.DefaultWorkingDirectory)/tests/python/coverage.xml'
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(System.DefaultWorkingDirectory)/tests/python/coverage.xml'
+      reportDirectory: '$(System.DefaultWorkingDirectory)/tests/python/htmlcov'
+      failIfCoverageEmpty: true

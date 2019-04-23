@@ -35,10 +35,10 @@ class C {
     const bool get_booly() const;
 
     // overloaded functions
-    std::string overloadMethod(A a);
-    std::string overloadMethod(B b);
-    std::string overloadMethod(A a, B b);
-    std::string overloadMethod(A a, C c);
+    std::string overload_method(A a);
+    std::string overload_method(B b);
+    std::string overload_method(A a, B b);
+    std::string overload_method(A a, C c);
 };
 
 } // namespace core

@@ -1,0 +1,4 @@
+jobs:
+- template: ./.azure-pipelines/az-py-linux.yml
+- template: ./.azure-pipelines/azure-py-win.yml
+

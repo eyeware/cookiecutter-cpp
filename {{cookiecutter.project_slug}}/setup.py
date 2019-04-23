@@ -68,6 +68,7 @@ setup(
     license='{{ cookiecutter.license }}',
     package_dir = {'': os.path.join('src','python')},
     packages=['{{ cookiecutter.project_namespace }}.{{ cookiecutter.project_slug }}'],
+    data_files={'': ['LICENSE'] },
     install_requires=requirements,
     tests_require=[],
     setup_requires=setup_requirements,

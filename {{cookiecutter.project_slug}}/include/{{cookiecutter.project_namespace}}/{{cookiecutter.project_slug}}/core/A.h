@@ -15,15 +15,15 @@ namespace {{ cookiecutter.project_slug }} {
 namespace core {
 
 /**
-* @brief A class with private members and public functions.
-*
-* This class is written in C++11. Some of the functions of this class use
-* objects of type B.
-*
-* Optionally, Python bindings can be generated for this class, by using
-* tools like pybind11 or SWIG.
-*
-*/
+ * @brief A class with private members and public functions.
+ *
+ * This class is written in C++11. Some of the functions of this class use
+ * objects of type B.
+ *
+ * Optionally, Python bindings can be generated for this class, by using
+ * tools like pybind11 or SWIG.
+ *
+ */
 class A {
     std::string m_name; /**< name of the object */
 
@@ -39,14 +39,14 @@ class A {
 
     virtual const std::string get_name() const; /**< function to get the name of this object */
 
-    void passByValue(B b);            /**< function that passes an object by value */
-    void passByReference(const B &b); /**< function that passes an object by reference-to-const */
-    void passByPointer(B *b);         /**< function that passes an object by pointer */
-    B returnValue();                  /**< function that returns an object */
-    B &returnReference(B &b);         /**< function that returns the reference to an object */
-    B *returnRawPointer();            /**< function that returns a raw pointer to an object */
+    void pass_by_value(B b);            /**< function that passes an object by value */
+    void pass_by_reference(const B &b); /**< function that passes an object by reference-to-const */
+    void pass_by_pointer(B *b);         /**< function that passes an object by pointer */
+    B return_value();                   /**< function that returns an object */
+    B &return_reference(B &b);          /**< function that returns the reference to an object */
+    B *return_raw_pointer();            /**< function that returns a raw pointer to an object */
     std::shared_ptr<B>
-    returnSharedPointer(); /**< function that returns a shared pointer to an object */
+    return_shared_pointer(); /**< function that returns a shared pointer to an object */
 };
 
 const std::string

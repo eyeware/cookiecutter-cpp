@@ -1,0 +1,31 @@
+jobs:
+- job: LinuxCPP
+  strategy:
+    maxParallel: 4
+  pool:
+    name: Hosted Ubuntu 1604
+  steps:
+  - task: Bash@3
+    displayName: 'Bash Script'
+    inputs:
+      targetType: filePath
+      filePath: '$(System.DefaultWorkingDirectory)/.ci_scripts/run_docker_build.sh'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/.ci_scripts'
+
+  - task: PublishTestResults@2
+    displayName: 'Publish Test Results **/test*.xml'
+    inputs:
+      testResultsFiles: '**/test*.xml'
+      searchFolder: '$(System.DefaultWorkingDirectory)/build'
+      failTaskOnFailedTests: true
+      testRunTitle: 'Unit tests & clang-tidy checks'
+      buildPlatform: linux
+      buildConfiguration: Debug
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish code coverage from $(System.DefaultWorkingDirectory)/build/coverage_gcovr_cobertura_xml.xml'
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(System.DefaultWorkingDirectory)/build/coverage_gcovr_cobertura_xml.xml'
+      reportDirectory: '$(System.DefaultWorkingDirectory)/build/coverage_gcovr_html'
+      failIfCoverageEmpty: true

@@ -27,6 +27,14 @@ To setup the project you will require conda_ package manager, and other native
 tools that are not available in _conda-forge packages.
 
 
+Local Docker Development
+========================
+
+::
+
+    ./provision/linux/docker/build_docker.sh
+    ./dockcross bash
+
 Linux
 -----
 
@@ -203,7 +211,7 @@ Note: please check this `install cmake components (1)`_, `install cmake componen
 
     add_custom_target(install-<component>
         DEPENDS <list of targes>
-        COMMAND 
+        COMMAND
         "${CMAKE_COMMAND}" -DCMAKE_INSTALL_COMPONENT=<component>
         -P "${CMAKE_BINARY_DIR}/cmake_install.cmake"
     )
@@ -538,15 +546,15 @@ In order to execute tests under test coverage, the project must be build in
     cd build
     cmake --build . --target coverage
 
-Open the file `./coverage/index.html` with your browser to see the coverage 
+Open the file `./coverage/index.html` with your browser to see the coverage
 report. The report is generated inside the `build` directory.
 
 
 Python & C++
 ------------
 
-Python tests are implemented using `Python unittest`_ test framework, also take 
-a look at `Python unittest mock`_, for integration tests. This project suggests 
+Python tests are implemented using `Python unittest`_ test framework, also take
+a look at `Python unittest mock`_, for integration tests. This project suggests
 using pytest_ for executing tasks related to the TDD cycle.
 
 Check `pytest command line`_ for more usage details.
@@ -555,7 +563,7 @@ To check test coverage we use pytest-cov_.
 
 TODO: check pytest-xdist_ for parallel test execution and other extensions to pytest.
 
-Unit tests, are organized by unittest.TestCase, that group fixtures (test 
+Unit tests, are organized by unittest.TestCase, that group fixtures (test
 functions), test cases can also be grouped into unittest.TestSuite classes, to
 know a bit more about test structures follow the links above.
 
@@ -589,7 +597,7 @@ Command output:
 
 ::
 
-    collected 2 items                                                                                                                                                                                          
+    collected 2 items
 
     tests/python/test_rock.py
           SETUP    C _UnitTestCase__pytest_class_setup
@@ -800,7 +808,7 @@ There are pre-commit hooks for git installed in the git repository to enforce th
 Versioning
 ----------
 
-This project uses the following versioning scheme ``<major>.<minor>.<patch>[-<release>]``. 
+This project uses the following versioning scheme ``<major>.<minor>.<patch>[-<release>]``.
 The release part identifies the development stage. Release part is one of {prod, alpha, beta}, being prod optional.
 
 Example:

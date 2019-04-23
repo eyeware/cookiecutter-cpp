@@ -1,0 +1,34 @@
+jobs:
+- job: WinCPP
+  strategy:
+    maxParallel: 4
+  pool:
+    vmImage: vs2017-win2016
+  steps:
+  - script: |
+     choco install git 7zip
+     choco install -y vcbuildtools --version 2015.4 -ia "/Full"
+    displayName: choco deps
+
+  - powershell: Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
+    displayName: Add conda to PATH
+
+  - script: conda env create --quiet --file conda/condaenv_dev.yaml
+    displayName: Create Anaconda environment
+
+  - script: |
+     call activate sdk
+     mkdir build
+     pwd
+     call "C:\Program Files (x86)\Microsoft Visual C++ Build Tools\vcbuildtools.bat" amd64
+     pwd
+     d:
+     cd $(System.DefaultWorkingDirectory)/build
+     pwd
+     REM cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Debug
+     if not %errorlevel%==0 exit /b 1
+     REM cmake --build . --target all
+     if not %errorlevel%==0 exit /b 1
+     REM cmake --build . --target test_junit_report
+     if not %errorlevel%==0 exit /b 1
+    displayName: cmake

@@ -33,13 +33,13 @@ C::~C() {}
 const bool C::get_booly() const { return m_booly; }
 
 // overloaded functions
-std::string C::overloadMethod(A a) { return "A"; }
+std::string C::overload_method(A a) { return "A"; }
 
-std::string C::overloadMethod(B b) { return "B"; }
+std::string C::overload_method(B b) { return "B"; }
 
-std::string C::overloadMethod(A a, B b) { return "A_B"; }
+std::string C::overload_method(A a, B b) { return "A_B"; }
 
-std::string C::overloadMethod(A a, C c) { return "A_C"; }
+std::string C::overload_method(A a, C c) { return "A_C"; }
 
 } // namespace core
 } // namespace {{cookiecutter.project_slug}}

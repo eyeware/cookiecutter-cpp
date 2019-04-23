@@ -1,7 +1,7 @@
 set -exuo pipefail
 
 # goto to project root
-cd .. 
+cd ..
 
 docker run --rm practicalci/linux-anvil:cpp-python-dev > dockcross
 chmod +x dockcross
@@ -28,7 +28,9 @@ cmake --build . --target coverage_gcovr_html
 
 # leave this one for last
 cmake --build . --target format-check-all
-cmake --build . --target clang-tidy-junit-report 
+cmake --build . --target clang-tidy-junit-report
+
+cd ../tests/python && py.test . --junitxml pytest-junit.xml --cov=. . --cov-report=xml --cov-report=html
 
 EOF
 

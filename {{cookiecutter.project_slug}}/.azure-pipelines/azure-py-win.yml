@@ -1,0 +1,42 @@
+jobs:
+- job: WinPY
+  strategy:
+    maxParallel: 4
+  pool:
+    vmImage: vs2017-win2016
+  steps:
+  - script: |
+     choco install git 7zip
+     choco install -y vcbuildtools --version 2015.4 -ia "/Full"
+    displayName: choco deps
+
+  - powershell: Write-Host "##vso[task.prependpath]$env:CONDA\Scripts"
+    displayName: Add conda to PATH
+
+  - script: conda env create --quiet --file conda/condaenv_dev.yaml
+    displayName: Create Anaconda environment
+
+  - script: |
+     call activate sdk
+     pwd && ls -la
+     cd tests/python && py.test . --junitxml pytest-junit.xml --cov=. . --cov-report=xml --cov-report=html
+     if not %errorlevel%==0 exit /b 1
+    displayName: Python tests
+
+  - task: PublishTestResults@2
+    displayName: 'Publish Python Test Results pytest-junit.xml'
+    inputs:
+      testResultsFiles: 'pytest-*.xml'
+      searchFolder: '$(System.DefaultWorkingDirectory)/tests/python/'
+      failTaskOnFailedTests: true
+      testRunTitle: 'Python unit tests for Windows'
+      buildPlatform: linux
+      buildConfiguration: Debug
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish Python coverage from $(System.DefaultWorkingDirectory)/tests/python/coverage.xml'
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(System.DefaultWorkingDirectory)/tests/python/coverage.xml'
+      reportDirectory: '$(System.DefaultWorkingDirectory)/tests/python/htmlcov'
+      failIfCoverageEmpty: true

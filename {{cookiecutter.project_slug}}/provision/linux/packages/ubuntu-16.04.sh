@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # @author: Mario Costa
 # @date: 06/11/2018
- 
+
 # Ubunto development environment bootstrap script
 
 #------------------------------------------------------------------------------
@@ -10,7 +10,7 @@
 
 
 #------------------------------------------------------------------------------
-# Add here ubuntu specific tools that are not available via anaconda cloud 
+# Add here ubuntu specific tools that are not available via anaconda cloud
 # packages.
 #------------------------------------------------------------------------------
 
@@ -28,4 +28,3 @@ apt-get update -y && \
         iwyu && \
     apt-get clean -y && \
     apt-get autoremove --purge -y
-

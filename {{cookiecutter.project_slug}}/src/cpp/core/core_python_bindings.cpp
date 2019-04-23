@@ -31,13 +31,13 @@ PYBIND11_MODULE(core, module) {
         // getter
         .def("get_name", &A::get_name)
         // functions that use another class B
-        .def("passByValue", &A::passByValue)
-        .def("passByReference", &A::passByReference)
-        .def("passByPointer", &A::passByPointer)
-        .def("returnValue", &A::returnValue)
-        .def("returnReference", &A::returnReference)
-        .def("returnRawPointer", &A::returnRawPointer)
-        .def("returnSharedPointer", &A::returnSharedPointer);
+        .def("passByValue", &A::pass_by_value)
+        .def("passByReference", &A::pass_by_reference)
+        .def("passByPointer", &A::pass_by_pointer)
+        .def("returnValue", &A::return_value)
+        .def("returnReference", &A::return_reference)
+        .def("returnRawPointer", &A::return_raw_pointer)
+        .def("returnSharedPointer", &A::return_shared_pointer);
 
     // non-member functions
     module.def("get_name_of_other", &get_name_of_other);
@@ -79,10 +79,10 @@ PYBIND11_MODULE(core, module) {
         // py::overload_cast<B>(&C::overloadMethod)
         // py::overload_cast<A,B>(&C::overloadMethod)
         // py::overload_cast<A,C>(&C::overloadMethod)
-        .def("overloadMethod", (std::string (C::*)(A)) & C::overloadMethod)
-        .def("overloadMethod", (std::string (C::*)(B)) & C::overloadMethod)
-        .def("overloadMethod", (std::string (C::*)(A, B)) & C::overloadMethod)
-        .def("overloadMethod", (std::string (C::*)(A, C)) & C::overloadMethod);
+        .def("overloadMethod", (std::string(C::*)(A)) & C::overload_method)
+        .def("overloadMethod", (std::string(C::*)(B)) & C::overload_method)
+        .def("overloadMethod", (std::string(C::*)(A, B)) & C::overload_method)
+        .def("overloadMethod", (std::string(C::*)(A, C)) & C::overload_method);
 
     py::class_<D>(module, "D")
         // constructors

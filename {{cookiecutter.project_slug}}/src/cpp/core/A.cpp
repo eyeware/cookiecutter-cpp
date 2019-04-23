@@ -35,22 +35,22 @@ A::~A() {}
 const std::string A::get_name() const { return m_name; }
 
 // functions that use another class B
-void A::passByValue(B b) {}
+void A::pass_by_value(B b) {}
 
-void A::passByReference(const B &b) {}
+void A::pass_by_reference(const B &b) {}
 
-void A::passByPointer(B *b) {}
+void A::pass_by_pointer(B *b) {}
 
-B A::returnValue() { return B(); }
+B A::return_value() { return B(); }
 
-B &A::returnReference(B &b) { return b; }
+B &A::return_reference(B &b) { return b; }
 
-B *A::returnRawPointer() {
-    B *raw_pointer_to_B = new B(); // allocate storage on the heap
-    return raw_pointer_to_B;
+B *A::return_raw_pointer() {
+    B *raw_pointer_to_b = new B(); // allocate storage on the heap
+    return raw_pointer_to_b;
 }
 
-std::shared_ptr<B> A::returnSharedPointer() { return std::make_shared<B>(); }
+std::shared_ptr<B> A::return_shared_pointer() { return std::make_shared<B>(); }
 
 // non-member function to get the name of an A object
 const std::string get_name_of_other(const A &other) { return other.get_name(); }

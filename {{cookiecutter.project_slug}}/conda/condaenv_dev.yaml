@@ -4,8 +4,9 @@ channels:
   - defaults
 dependencies:
 # Dev tools
-  - bump2version=0.5.8
+  - bumpversion
   - cookiecutter=1.6
+  - pytest-cov=2.6.1
 # C++ dev tools
   - pyyaml
   - cmake=3.13
@@ -23,3 +24,5 @@ dependencies:
   - pybind11=2.2
   - swig=3.0
   - eigen=3.3
+  - pip:
+    - pycobertura==0.10.5
