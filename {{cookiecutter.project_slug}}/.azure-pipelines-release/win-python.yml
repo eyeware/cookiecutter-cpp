@@ -1,5 +1,5 @@
 jobs:
-- job: win_dev_cpp
+- job: win_dev_python
   strategy:
     maxParallel: 4
   pool:
@@ -19,14 +19,6 @@ jobs:
 
      call activate {{cookiecutter.project_slug}}
 
-     mkdir build
-     cd build
-
-     cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Debug
+     python setup.py bdist_wheel
      if not %errorlevel%==0 exit /b 1
-     cmake --build . --target all
-     if not %errorlevel%==0 exit /b 1
-     cmake --build . --target test_junit_report
-     if not %errorlevel%==0 exit /b 1
-
     displayName: Build

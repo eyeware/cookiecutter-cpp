@@ -1,5 +1,5 @@
 jobs:
-- job: linux_cpp_python
+- job: linux_dev_python
   strategy:
     maxParallel: 4
   pool:

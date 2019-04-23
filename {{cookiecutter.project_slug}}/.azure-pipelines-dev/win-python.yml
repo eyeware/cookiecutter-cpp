@@ -1,5 +1,5 @@
 jobs:
-- job: WinPY
+- job: win_dev_python
   strategy:
     maxParallel: 4
   pool:

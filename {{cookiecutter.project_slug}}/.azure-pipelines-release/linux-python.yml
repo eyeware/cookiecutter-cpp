@@ -1,0 +1,13 @@
+jobs:
+- job: linux_dev_python
+  strategy:
+    maxParallel: 4
+  pool:
+    name: Hosted Ubuntu 1604
+  steps:
+  - task: Bash@3
+    displayName: 'Bash Script'
+    inputs:
+      targetType: filePath
+      filePath: '$(System.DefaultWorkingDirectory)/.ci_scripts/run_docker_build_release_python_pip.sh'
+      workingDirectory: '$(System.DefaultWorkingDirectory)/.ci_scripts'
