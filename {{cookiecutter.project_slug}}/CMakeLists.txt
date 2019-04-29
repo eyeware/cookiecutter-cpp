@@ -197,7 +197,7 @@ if(BUILD_TESTS)
     endif()
 
     if(ENABLE_CXX_COVERAGE_GCOVR_COBERTURA_XML_REPORTS)
-      setup_target_for_coverage_gcovr_xml(NAME coverage_gcovr_cobertura_xml 
+      setup_target_for_coverage_gcovr_xml(NAME coverage_gcovr_cobertura_xml
         EXECUTABLE $<TARGET_FILE:${PROJECT_TEST_TARGET}>
         DEPENDENCIES ${PROJECT_TEST_TARGET}
       )

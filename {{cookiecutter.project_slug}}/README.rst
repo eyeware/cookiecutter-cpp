@@ -23,7 +23,7 @@ Setup Project Environment
 .. _conda : https://conda.io/en/latest/
 .. _conda-forge : https://conda-forge.org/
 
-To setup the project you will require conda_ package manager, and other native 
+To setup the project you will require conda_ package manager, and other native
 tools that are not available in _conda-forge packages.
 
 

@@ -4,7 +4,7 @@ channels:
   - defaults
 dependencies:
 # Dev tools
-  - bumpversion
+  - bumpversion=0.5.3
   - cookiecutter=1.6
   - pytest-cov=2.6.1
 # C++ dev tools
