@@ -23,9 +23,16 @@ function(practci_add_cpp_module)
   # the module must be under src/<module_name>
   get_filename_component(MODULE_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)
 
-  # file(RELATIVE_PATH MODULE_INSTALL_PREFIX_ ${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}
-  # string(REGEX MATCH "\/([0-9A-z]+\/)*(src\/)(([0-9A-z]+\/?)*)" MODULE_PREFIX "/a/b/c/src/p1/p2/m")
-  # prefix p1/p2/m in CMAKE_MATCH_3
+  file(RELATIVE_PATH MODULE_INSTALL_PREFIX_ ${PROJECT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+  string(REGEX MATCH "\/?([0-9A-z]+\/)*(cpp\/)(([0-9A-z]+\/?)*)" MODULE_PREFIX "${MODULE_INSTALL_PREFIX_}")
+  # prefix sdk/core/m in CMAKE_MATCH_3
+  set(MODULE_PREFIX ${CMAKE_MATCH_3})
+
+  message("MODULE_PREFIX: ${MODULE_PREFIX}")
+
+  # TODO: this was meant to be used with multiple level packages, but its not working
+  # due to python import conflict between __init__.py and the root module...
+  get_filename_component(MODULE_PYTHON_PREFIX "${MODULE_PREFIX}" DIRECTORY)
 
   string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER) # upper case module name
   set(MODULE_OBJECT_LIBRARY_NAME ${MODULE_NAME}-objects)
@@ -36,7 +43,9 @@ function(practci_add_cpp_module)
 
   # unset(MODULE_PYTHON_INSTALL_RPATH )
   # TODO: refactor these variables
-  set(MODULE_INSTALL_INCLUDEDIR ${PROJECT_INSTALL_INCLUDEDIR}/${MODULE_NAME})
+  set(MODULE_INSTALL_INCLUDEDIR ${PROJECT_INSTALL_INCLUDEDIR}/${MODULE_PREFIX})
+  # TODO: review this, this should be removed as only one lib will be generated.
+  # set(MODULE_INSTALL_PYTHON_SITEARCH ${PROJECT_INSTALL_PYTHON_SITEARCH}/${MODULE_PYTHON_PREFIX})
   set(MODULE_INSTALL_PYTHON_SITEARCH ${PROJECT_INSTALL_PYTHON_SITEARCH})
 
   # Windows does not support rpath, so we will change the library location to
@@ -48,7 +57,7 @@ function(practci_add_cpp_module)
     set(MODULE_INSTALL_LIBDIR ${PROJECT_INSTALL_LIBDIR})
   endif()
 
-  set(MODULE_INCLUDEDIR ${PROJECT_INCLUDEDIR}/${MODULE_NAME})
+  set(MODULE_INCLUDEDIR ${PROJECT_INCLUDEDIR}/${MODULE_PREFIX})
 
   option(ENABLE_${MODULE_NAME_UPPER}_PYTHON_MODULE_STATIC_LINK
     "Link the python module with the static library." OFF)
@@ -201,4 +210,3 @@ function(practci_add_cpp_test)
   target_link_libraries(${PROJECT_TEST_TARGET} PRIVATE ${MODULE_NAME})
 
 endfunction(practci_add_cpp_test)
-
