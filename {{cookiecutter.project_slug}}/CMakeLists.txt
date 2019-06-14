@@ -269,16 +269,17 @@ endif()
 
 if(NOT INSTALL_FOR_PYPI)
   # install targets cmake file, previously registered targets in each module.
-  install(EXPORT ${PROJECT_NAME}-targets
-    FILE
-      ${PROJECT_NAME}Targets.cmake
-    NAMESPACE
-      ${PROJECT_NAMESPACE}_${PROJECT_NAME}::
-    DESTINATION
-      ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAMESPACE}
-    COMPONENT dev
-  )
-
+  # FIXME: this requires object files to added to the target libraries.
+  # at the moment export is disabled.
+  #install(EXPORT ${PROJECT_NAME}-targets
+  #  FILE
+  #    ${PROJECT_NAME}Targets.cmake
+  #  NAMESPACE
+  #    ${PROJECT_NAMESPACE}_${PROJECT_NAME}::
+  #  DESTINATION
+  #    ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAMESPACE}
+  #  COMPONENT dev
+  #)
 
   # TODO: Install component targets, needs to be executed after the cmake build
   add_custom_target(install-lib
