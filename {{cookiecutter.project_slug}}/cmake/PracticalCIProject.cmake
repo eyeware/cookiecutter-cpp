@@ -2,6 +2,18 @@ message(WARNING "setting cmake policy CMP0079 NEW, required for the project stru
 
 cmake_policy(SET CMP0079 NEW)
 
+
+#
+# This adds a module to the project. A module has two build modes, one for python and another 
+# for C++ libraries.
+#
+# At the moment, the python module is build for pypi like modules, and are statically linked
+# with the C++ libraries.
+#
+# Another option shall be provided (not suppored yet), to allow building python modules linking with project 
+# shared C++ library, to install in conda environments.
+#
+
 #
 # \param: SOURCES <list of source files in the module>
 # \param: INTERFACE <list of public API includes>
@@ -34,6 +46,8 @@ function(practci_add_cpp_module)
   # due to python import conflict between __init__.py and the root module...
   get_filename_component(MODULE_PYTHON_PREFIX "${MODULE_PREFIX}" DIRECTORY)
 
+  message("MODULE_PYTHON_PREFIX: ${MODULE_PREFIX}")
+
   string(TOUPPER ${MODULE_NAME} MODULE_NAME_UPPER) # upper case module name
   set(MODULE_OBJECT_LIBRARY_NAME ${MODULE_NAME}-objects)
   set(MODULE_SHARED_LIBRARY_NAME ${MODULE_NAME})
@@ -45,8 +59,8 @@ function(practci_add_cpp_module)
   # TODO: refactor these variables
   set(MODULE_INSTALL_INCLUDEDIR ${PROJECT_INSTALL_INCLUDEDIR}/${MODULE_PREFIX})
   # TODO: review this, this should be removed as only one lib will be generated.
-  # set(MODULE_INSTALL_PYTHON_SITEARCH ${PROJECT_INSTALL_PYTHON_SITEARCH}/${MODULE_PYTHON_PREFIX})
-  set(MODULE_INSTALL_PYTHON_SITEARCH ${PROJECT_INSTALL_PYTHON_SITEARCH})
+  set(MODULE_INSTALL_PYTHON_SITEARCH ${PROJECT_INSTALL_PYTHON_SITEARCH}/${MODULE_PYTHON_PREFIX})
+  # set(MODULE_INSTALL_PYTHON_SITEARCH ${PROJECT_INSTALL_PYTHON_SITEARCH})
 
   # Windows does not support rpath, so we will change the library location to
   # match the extension module, when building for pipy.
@@ -58,9 +72,6 @@ function(practci_add_cpp_module)
   endif()
 
   set(MODULE_INCLUDEDIR ${PROJECT_INCLUDEDIR}/${MODULE_PREFIX})
-
-  option(ENABLE_${MODULE_NAME_UPPER}_PYTHON_MODULE_STATIC_LINK
-    "Link the python module with the static library." OFF)
 
   add_library(${MODULE_OBJECT_LIBRARY_NAME} OBJECT ${MODULE_SOURCES})
 
@@ -83,19 +94,19 @@ function(practci_add_cpp_module)
     PROPERTY POSITION_INDEPENDENT_CODE ON
   )
 
-  # shared and static libraries built from the same object files
-  add_library(${MODULE_SHARED_LIBRARY_NAME} SHARED)
 
-  # in windows, change the C++ library output name, adding "lib" prefix.
-  if(WIN32)
-    set_target_properties(${MODULE_SHARED_LIBRARY_NAME} PROPERTIES OUTPUT_NAME "lib${MODULE_PYTHON_NAME}")
-  endif()
-
-  target_link_libraries(${MODULE_SHARED_LIBRARY_NAME} PUBLIC ${MODULE_OBJECT_LIBRARY_NAME})
-
-  if(BUILD_STATIC OR ENABLE_${MODULE_NAME_UPPER}_PYTHON_MODULE_STATIC_LINK)
+  # only build dynamic lib if not building for pypi using static linking
+  if(ENABLE_STATIC_LINK_PYTHON_MODULES)
     add_library(${MODULE_STATIC_LIBRARY_NAME} STATIC)
     target_link_libraries(${MODULE_STATIC_LIBRARY_NAME} PUBLIC ${MODULE_OBJECT_LIBRARY_NAME})
+  else()
+    add_library(${MODULE_SHARED_LIBRARY_NAME} SHARED)
+    # in windows, change the C++ library output name, adding "lib" prefix.
+    if(WIN32)
+      set_target_properties(${MODULE_SHARED_LIBRARY_NAME} PROPERTIES OUTPUT_NAME "lib${MODULE_PYTHON_NAME}")
+    endif()
+
+    target_link_libraries(${MODULE_SHARED_LIBRARY_NAME} PUBLIC ${MODULE_OBJECT_LIBRARY_NAME})
   endif()
 
 
@@ -106,7 +117,7 @@ function(practci_add_cpp_module)
     # SEE: https://github.com/pybind/python_example/issues/26
     set_target_properties(${MODULE_PYTHON_TARGET_NAME} PROPERTIES OUTPUT_NAME ${MODULE_PYTHON_NAME})
 
-    if(ENABLE_${MODULE_NAME_UPPER}_PYTHON_MODULE_STATIC_LINK)
+    if(ENABLE_STATIC_LINK_PYTHON_MODULES)
       # NOTE: there is an issue with this aproach, if different python modules share
       # the same libs then it might break static like functionality in the libs, as
       # each module will be static linked with the python extension module, and
@@ -126,6 +137,35 @@ function(practci_add_cpp_module)
       # SEE:
       # https://news.ycombinator.com/item?id=16745892
 
+      # 1- When on the conda environment, we need to set the rpath of the python
+      # module such that the libraries for which the module links get found by the
+      # linker at runtime.
+
+      # 2 - when on the system python, then we can set an abslute rpath to the
+      # library
+
+      file(RELATIVE_PATH MODULE_PYTHON_INSTALL_RPATH
+        ${CMAKE_INSTALL_PREFIX}/${MODULE_INSTALL_PYTHON_SITEARCH}
+        ${CMAKE_INSTALL_PREFIX}/${MODULE_INSTALL_LIBDIR}
+      )
+
+      set(MODULE_PYTHON_INSTALL_RPATH $ORIGIN/${MODULE_PYTHON_INSTALL_RPATH})
+
+      file(RELATIVE_PATH MODULE_PYTHON_BUILD_RPATH
+        ${CMAKE_BINARY_DIR}/${MODULE_INSTALL_PYTHON_SITEARCH}
+        ${CMAKE_BINARY_DIR}/${MODULE_INSTALL_LIBDIR}
+      )
+
+      # TODO: build path might be wrong, need to check with tests!!
+      set(MODULE_PYTHON_BUILD_RPATH $ORIGIN/${MODULE_PYTHON_BUILD_RPATH})
+
+      message("MODULE_PYTHON_INSTALL_RPATH ${MODULE_PYTHON_INSTALL_RPATH}")
+      message("MODULE_PYTHON_BUILD_RPATH ${MODULE_PYTHON_BUILD_RPATH}")
+
+      set_target_properties(${MODULE_PYTHON_TARGET_NAME} PROPERTIES
+          INSTALL_RPATH ${MODULE_PYTHON_INSTALL_RPATH}
+          BUILD_RPATH ${MODULE_PYTHON_BUILD_RPATH}
+      )
     endif()
 
     # requires cmake policy CMP0079, introduced in cmake 3.13.
@@ -153,20 +193,22 @@ function(practci_add_cpp_module)
   # install shared lib
   # TODO: clarify issue about object libs https://gitlab.kitware.com/cmake/cmake/issues/18935
 
-  if(WIN32)
-    install(TARGETS ${MODULE_SHARED_LIBRARY_NAME} ${MODULE_OBJECT_LIBRARY_NAME}
-#      EXPORT ${PROJECT_NAME}-targets # FIXME: this is causing issues at the moment, comment it
-      RUNTIME DESTINATION ${MODULE_INSTALL_LIBDIR} COMPONENT libs
-    )
-  else()
-    install(TARGETS ${MODULE_SHARED_LIBRARY_NAME} ${MODULE_OBJECT_LIBRARY_NAME}
-#      EXPORT ${PROJECT_NAME}-targets # FIXME: this is causing issues at the moment, comment it
-      LIBRARY DESTINATION ${MODULE_INSTALL_LIBDIR} COMPONENT libs
-    )
+  if(NOT ENABLE_STATIC_LINK_PYTHON_MODULES)
+    if(WIN32)
+      install(TARGETS ${MODULE_SHARED_LIBRARY_NAME} ${MODULE_OBJECT_LIBRARY_NAME}
+#        EXPORT ${PROJECT_NAME}-targets # FIXME: this is causing issues at the moment, comment it
+        RUNTIME DESTINATION ${MODULE_INSTALL_LIBDIR} COMPONENT libs
+      )
+    else()
+      install(TARGETS ${MODULE_SHARED_LIBRARY_NAME} ${MODULE_OBJECT_LIBRARY_NAME}
+#        EXPORT ${PROJECT_NAME}-targets # FIXME: this is causing issues at the moment, comment it
+        LIBRARY DESTINATION ${MODULE_INSTALL_LIBDIR} COMPONENT libs
+      )
+    endif()
   endif()
 
   # install static lib
-  if(BUILD_STATIC AND NOT INSTALL_FOR_PYPI)
+  if(NOT INSTALL_FOR_PYPI)
     install(TARGETS ${MODULE_STATIC_LIBRARY_NAME}
 #      EXPORT ${PROJECT_NAME}-targets # FIXME: this is causing issues at the moment, comment it
       ARCHIVE DESTINATION ${MODULE_INSTALL_LIBDIR} COMPONENT dev
@@ -184,6 +226,27 @@ function(practci_add_cpp_module)
   endif()
 
 endfunction(practci_add_cpp_module)
+
+function(print_target_properties tgt)
+  if(NOT TARGET ${tgt})
+    message("There is no target named '${tgt}'")
+    return()
+  endif()
+
+  foreach (prop ${CMAKE_PROPERTY_LIST})
+    string(REPLACE "<CONFIG>" "${CMAKE_BUILD_TYPE}" prop ${prop})
+    # Fix https://stackoverflow.com/questions/32197663/how-can-i-remove-the-the-location-property-may-not-be-read-from-target-error-i
+    #if(prop STREQUAL "LOCATION" OR prop MATCHES "^LOCATION_" OR prop MATCHES "_LOCATION$")
+    #  continue()
+    #endif()
+    # message ("Checking ${prop}")
+    get_property(propval TARGET ${tgt} PROPERTY ${prop} SET)
+    if (propval)
+      get_target_property(propval ${tgt} ${prop})
+      message ("${tgt} ${prop} = ${propval}")
+    endif()
+  endforeach(prop)
+endfunction(print_target_properties)
 
 # Add module tests here
 
@@ -206,7 +269,9 @@ function(practci_add_cpp_test)
   # otherwise they might not be found where you include the target.
   target_sources(${PROJECT_TEST_TARGET} PRIVATE ${MODULE_SOURCES})
 
+  set(MODULE_STATIC_LIBRARY_NAME ${MODULE_NAME}-static)
+
   # link the module to the project test target
-  target_link_libraries(${PROJECT_TEST_TARGET} PRIVATE ${MODULE_NAME})
+  target_link_libraries(${PROJECT_TEST_TARGET} PUBLIC ${MODULE_STATIC_LIBRARY_NAME})
 
 endfunction(practci_add_cpp_test)
