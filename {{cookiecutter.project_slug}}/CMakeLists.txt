@@ -1,6 +1,6 @@
-# {{ cookiecutter.project_name }}
+# Project: {{ cookiecutter.project_name }}
 # {{ cookiecutter.description }}
-# Copyright {{ cookiecutter.year }}, {{ cookiecutter.author }}
+# Copyright (c) {% now 'local', '%Y' %}, {% if cookiecutter.organization %}{{ cookiecutter.organization }}{% else %}{{ cookiecutter.author }} <{{ cookiecutter.email.split('@')[0] }} at {{ cookiecutter.email.split('@')[1]|replace('.', ' dot ') }}>{% endif %}
 
 cmake_minimum_required(VERSION 3.12)
 project({{ cookiecutter.project_slug }} VERSION {{ cookiecutter.version }} LANGUAGES C CXX)
@@ -10,14 +10,16 @@ set(PROJECT_URL         "https://{{ cookiecutter.git_server }}/{{ cookiecutter.u
 set(PROJECT_NAMESPACE   "{{ cookiecutter.project_namespace }}")
 set(PROJECT_LIB_TARGET   ${PROJECT_NAMESPACE}-${PROJECT_NAME})
 set(PROJECT_TEST_TARGET test_main)
+set(PROJECT_TARGETS_EXPORT_NAME "${PROJECT_NAME}Targets")
 
-
-option(BUILD_PYTHON_PYBIND11 "Build pybind11 python bindings." ON)
+option(BUILD_PYTHON_PYBIND11 "Build pybind11 python bindings." OFF)
 
 option(BUILD_PYTHON_SWIG "Build swig python bindings." OFF)
 
 option(BUILD_DOC "Build code documentation using Doxygen." OFF)
 option(BUILD_TESTS "Build project tests" ON)
+
+option(INSTALL_DEVELOPMENT "Install API header files, static libs and cmake export targets." OFF)
 
 if(MSVC)
   option(ENABLE_COVERAGE "Enable coverage for the project." OFF)
@@ -28,25 +30,30 @@ endif()
 # INSTALL_FOR_PYPI means that the libs go under the package
 option(INSTALL_FOR_PYPI "Install libraries and python bindings inside the python package." OFF)
 
-option(ENABLE_STATIC_LINK_PYTHON_MODULES "Python extension modules are static linked with the module library." ON)
+option(ENABLE_STATIC_LINK_PYTHON_MODULES "Python extension modules are static linked with the module library." OFF)
 
 # ------------------------------------------------------------------------------
 # Add external cmake modules to project.
 # Add find_<package_name> files to cmake-modules directory.
 # ------------------------------------------------------------------------------
 
+include(GNUInstallDirs)
+
+set(PROJECT_INSTALL_CMAKE_PACKAGEDIR ${CMAKE_INSTALL_PREFIX}/share/cmake/${PROJECT_NAMESPACE})
+
 # Make sure that our modules are captured first.
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake)
 
-include(GNUInstallDirs)
 
 string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
 set(PROJECT_PREFIX ${PROJECT_NAMESPACE}/${PROJECT_NAME})
-set(PROJECT_INCLUDEDIR ${PROJECT_SOURCE_DIR}/include/${PROJECT_PREFIX})
+set(PROJECT_PUBLIC_INCLUDEDIR ${PROJECT_SOURCE_DIR}/include/public)
+set(PROJECT_PRIVATE_INCLUDEDIR ${PROJECT_SOURCE_DIR}/include/private)
 
 
 include(CheckCXXCompilerFlag) # TODO: use new way
-include(CMakePackageConfigHelpers) # TODO:
+
+include(CMakePackageConfigHelpers)
 
 # Build flags
 set (CMAKE_CXX_STANDARD {{ cookiecutter.cpp_standard }}) # one of { 98, 11, 14 }
@@ -56,12 +63,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 # add target for all modules of the project.
-# NOTE: add target_link_libraries(${PROJECCT_NAME} <module name>) in each
+# NOTE: add target_link_libraries(${PROJECT_NAME} <module name>) in each
 # module CMakeLists.
 add_library(${PROJECT_LIB_TARGET} INTERFACE)
 
 # default setup of the project instalation folders
 set(PROJECT_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_PREFIX})
+
+message("PROJECT_INSTALL_INCLUDEDIR: ${PROJECT_INSTALL_INCLUDEDIR}")
+
 set(PROJECT_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR}/${PROJECT_PREFIX})
 
 if(BUILD_PYTHON_PYBIND11 OR BUILD_PYTHON_SWIG)
@@ -259,23 +269,37 @@ if(BUILD_TESTS)
 
 endif()
 
-if(BUILD_DOC AND NOT INSTALL_FOR_PYPI)
+if(BUILD_DOC AND INSTALL_DEVELOPMENT)
   add_subdirectory(doc)
 endif()
 
-if(NOT INSTALL_FOR_PYPI)
-  # install targets cmake file, previously registered targets in each module.
-# FIXME: this needs fixing
-#  install(EXPORT ${PROJECT_NAME}-targets
-#    FILE
-#      ${PROJECT_NAME}Targets.cmake
-#    NAMESPACE
-#      ${PROJECT_NAMESPACE}_${PROJECT_NAME}::
-#    DESTINATION
-#      ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAMESPACE}
-#    COMPONENT dev
-#  )
+if(INSTALL_DEVELOPMENT)
 
+  write_basic_package_version_file(
+      "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+      VERSION ${PROJECT_VERSION}
+      COMPATIBILITY SameMajorVersion
+  )
+
+  configure_package_config_file(
+    "${PROJECT_SOURCE_DIR}/cmake-package/${PROJECT_NAME}Config.cmake.in"
+    "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+    INSTALL_DESTINATION ${PROJECT_INSTALL_CMAKE_PACKAGEDIR}
+  )
+
+  install(FILES "${PROJECT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake"
+                "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake"
+    DESTINATION ${PROJECT_INSTALL_CMAKE_PACKAGEDIR}
+  )
+
+  install(EXPORT ${PROJECT_NAME}-targets
+    FILE
+      ${PROJECT_TARGETS_EXPORT_NAME}.cmake
+    NAMESPACE
+      ${PROJECT_NAMESPACE}-${PROJECT_NAME}::
+    DESTINATION
+      ${PROJECT_INSTALL_CMAKE_PACKAGEDIR}
+  )
 
   # TODO: Install component targets, needs to be executed after the cmake build
   add_custom_target(install-lib

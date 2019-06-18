@@ -2,7 +2,6 @@ message(WARNING "setting cmake policy CMP0079 NEW, required for the project stru
 
 cmake_policy(SET CMP0079 NEW)
 
-
 #
 # This adds a module to the project. A module has two build modes, one for python and another 
 # for C++ libraries.
@@ -54,39 +53,43 @@ function(practci_add_cpp_module)
   set(MODULE_STATIC_LIBRARY_NAME ${MODULE_NAME}-static)
   set(MODULE_PYTHON_NAME ${MODULE_NAME})
   set(MODULE_PYTHON_TARGET_NAME ${MODULE_NAME}-python)
-
-  # unset(MODULE_PYTHON_INSTALL_RPATH )
-  # TODO: refactor these variables
+  
   set(MODULE_INSTALL_INCLUDEDIR ${PROJECT_INSTALL_INCLUDEDIR}/${MODULE_PREFIX})
-  # TODO: review this, this should be removed as only one lib will be generated.
+  message("MODULE_INSTALL_INCLUDEDIR: ${MODULE_INSTALL_INCLUDEDIR}")
+
   set(MODULE_INSTALL_PYTHON_SITEARCH ${PROJECT_INSTALL_PYTHON_SITEARCH}/${MODULE_PYTHON_PREFIX})
-  # set(MODULE_INSTALL_PYTHON_SITEARCH ${PROJECT_INSTALL_PYTHON_SITEARCH})
 
   # Windows does not support rpath, so we will change the library location to
   # match the extension module, when building for pipy.
-  # TODO: rename INSTALL_FOR_PYPI by BUILD_FOR_PYTHON.
   if(INSTALL_FOR_PYPI)
     set(MODULE_INSTALL_LIBDIR ${MODULE_INSTALL_PYTHON_SITEARCH})
   else()
     set(MODULE_INSTALL_LIBDIR ${PROJECT_INSTALL_LIBDIR})
   endif()
 
-  set(MODULE_INCLUDEDIR ${PROJECT_INCLUDEDIR}/${MODULE_PREFIX})
+  set(MODULE_PUBLIC_INCLUDEDIR ${PROJECT_PUBLIC_INCLUDEDIR}/${PROJECT_PREFIX}/${MODULE_PREFIX})
+  set(MODULE_PRIVATE_INCLUDEDIR ${PROJECT_PRIVATE_INCLUDEDIR}/${PROJECT_PREFIX}/${MODULE_PREFIX})
 
   add_library(${MODULE_OBJECT_LIBRARY_NAME} OBJECT ${MODULE_SOURCES})
+  message("PROJECT_PUBLIC_INCLUDEDIR: ${PROJECT_PUBLIC_INCLUDEDIR}")
 
   target_include_directories(${MODULE_OBJECT_LIBRARY_NAME}
     PUBLIC
       $<INSTALL_INTERFACE:include>
-      $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include> # project public includes
+      $<BUILD_INTERFACE:${PROJECT_PUBLIC_INCLUDEDIR}> # project public includes
     PRIVATE
-      ${CMAKE_CURRENT_SOURCE_DIR} # private includes go here
+      ${CMAKE_CURRENT_SOURCE_DIR}                     # module private includes go here
+      $<BUILD_INTERFACE:${PROJECT_PRIVATE_INCLUDEDIR} # project private includes go here
   )
+
+  list(TRANSFORM MODULE_INTERFACE_HEADERS PREPEND ${MODULE_PUBLIC_INCLUDEDIR}/)
+
+  set_property(TARGET ${MODULE_OBJECT_LIBRARY_NAME} PROPERTY PUBLIC_HEADER ${MODULE_INTERFACE_HEADERS})
 
   target_link_libraries(${MODULE_OBJECT_LIBRARY_NAME}
       INTERFACE ${MODULE_INTERFACE_LINK_LIBRARIES}
-      PUBLIC ${MODULE_PUBLIC_LINK_LIBRARIES}
-      PRIVATE ${MODULE_PRIVATE_LINK_LIBRARIES}
+      PUBLIC    ${MODULE_PUBLIC_LINK_LIBRARIES}
+      PRIVATE   ${MODULE_PRIVATE_LINK_LIBRARIES}
   )
 
   # shared libraries need PIC, if they are compile from the object files
@@ -94,12 +97,15 @@ function(practci_add_cpp_module)
     PROPERTY POSITION_INDEPENDENT_CODE ON
   )
 
-
-  # only build dynamic lib if not building for pypi using static linking
-  if(ENABLE_STATIC_LINK_PYTHON_MODULES)
+  # if building for python with static link do not create share libraries. 
+  if((BUILD_PYTHON_PYBIND11 OR BUILD_PYTHON_SWIG) AND ENABLE_STATIC_LINK_PYTHON_MODULES)
     add_library(${MODULE_STATIC_LIBRARY_NAME} STATIC)
     target_link_libraries(${MODULE_STATIC_LIBRARY_NAME} PUBLIC ${MODULE_OBJECT_LIBRARY_NAME})
   else()
+    # add shared libraries and static libraries
+    add_library(${MODULE_STATIC_LIBRARY_NAME} STATIC)
+    target_link_libraries(${MODULE_STATIC_LIBRARY_NAME} PUBLIC ${MODULE_OBJECT_LIBRARY_NAME})  
+
     add_library(${MODULE_SHARED_LIBRARY_NAME} SHARED)
     # in windows, change the C++ library output name, adding "lib" prefix.
     if(WIN32)
@@ -174,7 +180,7 @@ function(practci_add_cpp_module)
     message("MODULE_INSTALL_PYTHON_SITEARCH: ${MODULE_INSTALL_PYTHON_SITEARCH}")
 
     install(TARGETS ${MODULE_PYTHON_TARGET_NAME}
-      LIBRARY DESTINATION ${MODULE_INSTALL_PYTHON_SITEARCH} COMPONENT python
+      LIBRARY DESTINATION ${MODULE_INSTALL_PYTHON_SITEARCH} COMPONENT Python
     )
   endif()
 
@@ -193,36 +199,32 @@ function(practci_add_cpp_module)
   # install shared lib
   # TODO: clarify issue about object libs https://gitlab.kitware.com/cmake/cmake/issues/18935
 
-  if(NOT ENABLE_STATIC_LINK_PYTHON_MODULES)
+
+  # Install exports, only if not compiling for python and if option 
+  # INSTALL_DEVELOPMENT is ON.
+  if(NOT BUILD_PYTHON_PYBIND11 AND NOT BUILD_PYTHON_SWIG AND INSTALL_DEVELOPMENT)
+
+    install(TARGETS ${MODULE_OBJECT_LIBRARY_NAME}
+      EXPORT ${PROJECT_NAME}-targets COMPONENT Development
+      PUBLIC_HEADER DESTINATION ${MODULE_INSTALL_INCLUDEDIR} COMPONENT Development
+    )
+    
+    install(TARGETS ${MODULE_STATIC_LIBRARY_NAME}
+      EXPORT ${PROJECT_NAME}-targets
+      ARCHIVE DESTINATION ${MODULE_INSTALL_LIBDIR} COMPONENT Development
+    )
+
     if(WIN32)
-      install(TARGETS ${MODULE_SHARED_LIBRARY_NAME} ${MODULE_OBJECT_LIBRARY_NAME}
-#        EXPORT ${PROJECT_NAME}-targets # FIXME: this is causing issues at the moment, comment it
-        RUNTIME DESTINATION ${MODULE_INSTALL_LIBDIR} COMPONENT libs
+      install(TARGETS ${MODULE_SHARED_LIBRARY_NAME}
+        EXPORT ${PROJECT_NAME}-targets
+        RUNTIME DESTINATION ${MODULE_INSTALL_LIBDIR} COMPONENT Runtime
       )
     else()
-      install(TARGETS ${MODULE_SHARED_LIBRARY_NAME} ${MODULE_OBJECT_LIBRARY_NAME}
-#        EXPORT ${PROJECT_NAME}-targets # FIXME: this is causing issues at the moment, comment it
-        LIBRARY DESTINATION ${MODULE_INSTALL_LIBDIR} COMPONENT libs
+      install(TARGETS ${MODULE_SHARED_LIBRARY_NAME}
+        EXPORT ${PROJECT_NAME}-targets
+        LIBRARY DESTINATION ${MODULE_INSTALL_LIBDIR} COMPONENT Runtime
       )
     endif()
-  endif()
-
-  # install static lib
-  if(NOT INSTALL_FOR_PYPI)
-    install(TARGETS ${MODULE_STATIC_LIBRARY_NAME}
-#      EXPORT ${PROJECT_NAME}-targets # FIXME: this is causing issues at the moment, comment it
-      ARCHIVE DESTINATION ${MODULE_INSTALL_LIBDIR} COMPONENT dev
-    )
-  endif()
-
-  list(TRANSFORM MODULE_INTERFACE_HEADERS PREPEND ${MODULE_INCLUDEDIR}/)
-
-  # install module header files
-  if(NOT INSTALL_FOR_PYPI)
-    install(FILES ${MODULE_INTERFACE_HEADERS}
-      DESTINATION ${MODULE_INSTALL_INCLUDEDIR}
-      COMPONENT dev
-    )
   endif()
 
 endfunction(practci_add_cpp_module)
