@@ -184,8 +184,8 @@ endif()
 # functions to add modules and just invoking a function
 include(PracticalCIProject)
 
-add_subdirectory(src/cpp/{{ cookiecutter.project_name }})
-add_subdirectory(src/cpp/{{ cookiecutter.project_name }}/core)
+add_subdirectory(src/cpp/{{ cookiecutter.project_slug }})
+add_subdirectory(src/cpp/{{ cookiecutter.project_slug }}/core)
 
 # ------------------------------------------------------------------------------
 # Setup tests and checks
