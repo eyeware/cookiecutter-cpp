@@ -22,11 +22,11 @@ namespace {{ cookiecutter.project_slug }} {
         int patch;
         int tweak;
 
-        Version(int major, int minor, int patch, int tweak) {
-            this.major = major;
-            this.minor = minor;
-            this.patch = patch;
-            this.tweak = tweak;
+        Version(int major, int minor, int patch, int tweak = 0) {
+            this->major = major;
+            this->minor = minor;
+            this->patch = patch;
+            this->tweak = tweak;
         }
 
         bool operator== (const Version& o) const;
@@ -38,7 +38,7 @@ namespace {{ cookiecutter.project_slug }} {
         bool operator< (const Version& o) const;
         bool operator>= (const Version& o) const;
 
-        static Version& get_version();
+        static const Version get_version();
     };
 
 } // namespace {{ cookiecutter.project_slug }}
