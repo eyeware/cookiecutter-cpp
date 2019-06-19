@@ -3,31 +3,47 @@
 namespace {{ cookiecutter.project_namespace }} {
 namespace {{ cookiecutter.project_slug }} {
 
-    bool Version::operator== (const Version& o) const {
-        return this->major == o.major && 
-            this->minor == o.minor && this->patch == o.patch;
+    bool Version::operator== (const Version& other) const {
+        return this->major == other.major && 
+            this->minor == other.minor && this->patch == other.patch;
     }
 
-    bool Version::operator!= (const Version& o) const {
-        return !(*this == o); 
+    bool Version::operator!= (const Version& other) const {
+        return !(*this == other); 
     }
 
-    bool Version::operator> (const Version& o) const {
-        return (this->major > o.major) || 
-            (this->major > o.major && this->minor > o.minor) ||
-            (this->major > o.major && this->minor > o.minor && this->patch > o.patch);
+    bool Version::operator> (const Version& other) const {
+        return (this->major > other.major) || 
+            (this->major > other.major && this->minor > other.minor) ||
+            (this->major > other.major && this->minor > other.minor && this->patch > other.patch);
     }
 
-    bool Version::operator< (const Version& o) const {
-        return !(*this > o) && *this != o;
+    bool Version::operator< (const Version& other) const {
+        return !(*this > other) && *this != other;
     }
 
-    bool Version::operator<= (const Version& o) const {
-        return (*this == o) || (*this < o);
+    bool Version::operator<= (const Version& other) const {
+        return (*this == other) || (*this < other);
     }
 
-    bool Version::operator>= (const Version& o) const {
-        return (*this == o) || (*this > o);
+    bool Version::operator>= (const Version& other) const {
+        return (*this == other) || (*this > other);
+    }
+
+    bool Version::major_at_least(const Version& other) const {
+        return (this->major == other.major) &&
+            (this->minor <= other.minor) &&
+            (this->patch <= other.patch);
+    }
+
+    bool Version::major_at_least(const Version& other) const {
+        return (this->major == other.major) &&
+            (this->minor == other.minor) &&
+            (this->patch <= other.patch);
+    }
+
+    std::ostream& operator<<(std::ostream& os, const Version& version) {
+        return os << "@PROJECT_NAMESPACE_UPPER@_@PROJECT_NAME_UPPER@_VERSION";
     }
 
     const Version Version::get_version() {
