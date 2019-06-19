@@ -61,6 +61,8 @@ include(CheckCXXCompilerFlag) # TODO: use new way
 
 include(CMakePackageConfigHelpers)
 
+message("CMAKE_CXX_COMPILE_FEATURES: ${CMAKE_CXX_COMPILE_FEATURES}")
+
 # Build flags
 set (CMAKE_CXX_STANDARD {{ cookiecutter.cpp_standard }}) # one of { 98, 11, 14 }
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
