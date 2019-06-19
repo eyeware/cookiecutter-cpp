@@ -9,13 +9,13 @@ set(PROJECT_AUTHOR      "{{ cookiecutter.author }}")
 set(PROJECT_URL         "https://{{ cookiecutter.git_server }}/{{ cookiecutter.username }}/{{ cookiecutter.project_slug }}")
 set(PROJECT_NAMESPACE   "{{ cookiecutter.project_namespace }}")
 set(PROJECT_PREFIX ${PROJECT_NAMESPACE}/${PROJECT_NAME})
-set(PROJECT_PUBLIC_INCLUDEDIR ${PROJECT_SOURCE_DIR}/include/public)
-set(PROJECT_PRIVATE_INCLUDEDIR ${PROJECT_SOURCE_DIR}/include/private)
+set(PROJECT_PUBLIC_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/public)
+set(PROJECT_PRIVATE_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/private)
 set(PROJECT_OBJECT_LIBRARY_MODULE_LIST "") # TODO: used to link with single project lib ??
 set(PROJECT_SHARED_LIBRARY_MODULE_LIST "") # TODO: used to export components for the find_package
 set(PROJECT_STATIC_LIBRARY_MODULE_LIST "") # TODO: used to export components for the find_package
-set(PROJECT_SHARED_LIBRARY_NAME ${PROJECT_NAME})
-set(PROJECT_STATIC_LIBRARY_NAME ${PROJECT_NAME}-static)
+set(PROJECT_SHARED_LIBRARY_NAME ${PROJECT_NAME}) # TODO: rename to avoid clash with the project module with same name.
+set(PROJECT_STATIC_LIBRARY_NAME ${PROJECT_NAME}-static) # TODO: rename to avoid clash with the project module with same name.
 
 set(PROJECT_TEST_TARGET test_main)
 set(PROJECT_TARGETS_EXPORT_NAME "${PROJECT_NAME}Modules")
@@ -87,13 +87,6 @@ if(BUILD_SINGLE_PROJECT_LIB)
   add_library(${PROJECT_SHARED_LIBRARY_NAME} SHARED src/null.cpp)
   add_library(${PROJECT_STATIC_LIBRARY_NAME} STATIC src/null.cpp)
 endif()
-
-# generate version file for the project with some macros and functions
-# for runtime version checks and static time checks 
-configure_file (
-  "${PROJECT_PUBLIC_INCLUDEDIR}/${PROJECT_PREFIX}/version.h.in"
-  "${PROJECT_PUBLIC_INCLUDEDIR}/${PROJECT_PREFIX}/version.h"
-  )
 
 if(BUILD_PYTHON_PYBIND11 OR BUILD_PYTHON_SWIG)
 
@@ -191,9 +184,8 @@ endif()
 # functions to add modules and just invoking a function
 include(PracticalCIProject)
 
-add_subdirectory(src/cpp/core)
-
-
+add_subdirectory(src/cpp/{{ cookiecutter.project_name }})
+add_subdirectory(src/cpp/{{ cookiecutter.project_name }}/core)
 
 # ------------------------------------------------------------------------------
 # Setup tests and checks

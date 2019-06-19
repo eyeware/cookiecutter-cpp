@@ -3,7 +3,7 @@
 tmpfile=$(mktemp /tmp/XXXXXX-cookiecutter-config.yaml)
 
 cat <<EOF >$tmpfile
-replay_dir: "$(pwd)/rock/.cookiecutter_replay/"
+replay_dir: "$(pwd)/{{cookiecutter.project_slug}}/.cookiecutter_replay/"
 EOF
 
 rm -rf cookiecutter_updated_template

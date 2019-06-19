@@ -1,0 +1,46 @@
+#include <{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/Version.h>
+
+namespace {{ cookiecutter.project_namespace }} {
+namespace {{ cookiecutter.project_slug }} {
+
+    bool Version::operator== (const Version& o) const {
+        return this.major == o.major && 
+            this.minor == o.minor && this.patch = o.patch;
+    }
+
+    bool Version::operator!= (const Version& o) const {
+        return !(this == o); 
+    }
+
+    bool Version::operator> (const Version& o) const {
+        return (this.major > o.major) || 
+            (this.major > o.major && this.minor > o.minor) ||
+            (this.major > o.major && this.minor > o.minor && this.patch > o.patch);
+    }
+
+    bool Version::operator< (const Version& o) const {
+        return !(this > o) && this != o;
+    }
+
+    bool Version::operator<= (const Version& o) const {
+        return (this == o) || (this < o);
+    }
+
+    bool Version::operator>= (const Version& o) const {
+        return (this == o) || (this > o);
+    }
+
+    Version& Version::get_version() {
+        const Version project_version = Version(@PROJECT_NAMESPACE_UPPER@_@PROJECT_NAME_UPPER@_VERSION_MAJOR, 
+                        @PROJECT_NAMESPACE_UPPER@_@PROJECT_NAME_UPPER@_VERSION_MINOR,
+                        @PROJECT_NAMESPACE_UPPER@_@PROJECT_NAME_UPPER@_VERSION_PATCH);
+
+        return project_version;
+    }
+
+
+
+} // namespace {{ cookiecutter.project_slug }}
+} // namespace {{ cookiecutter.project_namespace }}
+
+#endif
