@@ -9,8 +9,8 @@ set(PROJECT_AUTHOR      "{{ cookiecutter.author }}")
 set(PROJECT_URL         "https://{{ cookiecutter.git_server }}/{{ cookiecutter.username }}/{{ cookiecutter.project_slug }}")
 set(PROJECT_NAMESPACE   "{{ cookiecutter.project_namespace }}")
 set(PROJECT_PREFIX ${PROJECT_NAMESPACE}/${PROJECT_NAME})
-set(PROJECT_PUBLIC_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/public)
-set(PROJECT_PRIVATE_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include/private)
+set(PROJECT_PUBLIC_INCLUDEDIR ${PROJECT_SOURCE_DIR}/include/public)
+set(PROJECT_PRIVATE_INCLUDEDIR ${PROJECT_SOURCE_DIR}/include/private)
 set(PROJECT_OBJECT_LIBRARY_MODULE_LIST "") # TODO: used to link with single project lib ??
 set(PROJECT_SHARED_LIBRARY_MODULE_LIST "") # TODO: used to export components for the find_package
 set(PROJECT_STATIC_LIBRARY_MODULE_LIST "") # TODO: used to export components for the find_package
