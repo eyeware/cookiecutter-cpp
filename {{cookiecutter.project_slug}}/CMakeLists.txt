@@ -89,8 +89,8 @@ endif()
 # generate version file for the project with some macros and functions
 # for runtime version checks and static time checks 
 configure_file (
-  "${PROJECT_SOURCE_DIR}/src/version.h.in"
-  "${PROJECT_SOURCE_DIR}/src/version.h"
+  "${PROJECT_PUBLIC_INCLUDEDIR}/${PROJECT_PREFIX}/version.h.in"
+  "${PROJECT_PUBLIC_INCLUDEDIR}/${PROJECT_PREFIX}/version.h"
   )
 
 if(BUILD_PYTHON_PYBIND11 OR BUILD_PYTHON_SWIG)
