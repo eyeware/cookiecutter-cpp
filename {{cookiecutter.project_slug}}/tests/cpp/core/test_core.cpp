@@ -1,9 +1,9 @@
-#include "catch2/catch.hpp"
+#include <catch2/catch.hpp>
 
-#include "{{cookiecutter.project_namespace}}/{{ cookiecutter.project_slug }}/core/A.h"
-#include "{{cookiecutter.project_namespace}}/{{ cookiecutter.project_slug }}/core/B.h"
-#include "{{cookiecutter.project_namespace}}/{{ cookiecutter.project_slug }}/core/C.h"
-#include "{{cookiecutter.project_namespace}}/{{ cookiecutter.project_slug }}/core/D.h"
+#include <{{cookiecutter.project_namespace}}/{{ cookiecutter.project_slug }}/core/A.h>
+#include <{{cookiecutter.project_namespace}}/{{ cookiecutter.project_slug }}/core/B.h>
+#include <{{cookiecutter.project_namespace}}/{{ cookiecutter.project_slug }}/core/C.h>
+#include <{{cookiecutter.project_namespace}}/{{ cookiecutter.project_slug }}/core/D.h>
 
 using namespace {{ cookiecutter.project_namespace }}::{{ cookiecutter.project_slug }}::core;
 

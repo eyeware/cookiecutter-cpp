@@ -1,0 +1,43 @@
+
+#ifndef @PROJECT_NAMESPACE@_@PROJECT_NAME@_VERSION_H
+#define @PROJECT_NAMESPACE@_@PROJECT_NAME@_VERSION_H
+
+#define @PROJECT_NAMESPACE@_@PROJECT_NAME@_VERSION @PROJECT_VERSION@
+#define @PROJECT_NAMESPACE@_@PROJECT_NAME@_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
+#define @PROJECT_NAMESPACE@_@PROJECT_NAME@_VERSION_MINOR @PROJECT_VERSION_MINOR@
+#define @PROJECT_NAMESPACE@_@PROJECT_NAME@_VERSION_PATCH @PROJECT_VERSION_PATCH@
+#define @PROJECT_NAMESPACE@_@PROJECT_NAME@_VERSION_TWEAK @PROJECT_VERSION_TWEAK@
+
+#define @PROJECT_NAMESPACE@_@PROJECT_NAME@_AT_LEAST(x,y,z) \
+    (@PROJECT_NAMESPACE@_@PROJECT_NAME@_VERSION_MAJOR>x || (@PROJECT_NAMESPACE@_@PROJECT_NAME@_VERSION_MAJOR>=x && \
+    (@PROJECT_NAMESPACE@_@PROJECT_NAME@_VERSION_MINOR>y || (@PROJECT_NAMESPACE@_@PROJECT_NAME@_VERSION_MINOR>=y && \
+     @PROJECT_NAMESPACE@_@PROJECT_NAME@_VERSION_PATCH>=z))))
+
+namespace @PROJECT_NAMESPACE@ {
+    namespace @PROJECT_NAME@ {
+
+        struct version {
+            int major;
+            int minor;
+            int patch;
+            int tweak;
+
+            version(int major, int minor, int patch, int tweak) {
+                this.major = major;
+                this.minor = minor;
+                this.patch = patch;
+                this.tweak = tweak;
+            }
+        };
+
+        static version get_version() {
+            return version(@PROJECT_NAMESPACE@_@PROJECT_NAME@_VERSION_MAJOR, 
+                           @PROJECT_NAMESPACE@_@PROJECT_NAME@_VERSION_MINOR,
+                           @PROJECT_NAMESPACE@_@PROJECT_NAME@_VERSION_PATCH);
+        }
+
+    }
+}
+
+
+#endif

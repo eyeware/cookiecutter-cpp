@@ -54,6 +54,10 @@ function(practci_add_cpp_module)
   set(MODULE_PYTHON_NAME ${MODULE_NAME})
   set(MODULE_PYTHON_TARGET_NAME ${MODULE_NAME}-python)
   
+  list(APPEND PROJECT_OBJECT_LIBRARY_MODULE_LIST ${MODULE_OBJECT_LIBRARY_NAME})
+  list(APPEND PROJECT_SHARED_LIBRARY_MODULE_LIST ${MODULE_SHARED_LIBRARY_NAME})
+  list(APPEND PROJECT_STATIC_LIBRARY_MODULE_LIST ${MODULE_STATIC_LIBRARY_NAME})
+
   set(MODULE_INSTALL_INCLUDEDIR ${PROJECT_INSTALL_INCLUDEDIR}/${MODULE_PREFIX})
   message("MODULE_INSTALL_INCLUDEDIR: ${MODULE_INSTALL_INCLUDEDIR}")
 
@@ -102,17 +106,24 @@ function(practci_add_cpp_module)
     add_library(${MODULE_STATIC_LIBRARY_NAME} STATIC)
     target_link_libraries(${MODULE_STATIC_LIBRARY_NAME} PUBLIC ${MODULE_OBJECT_LIBRARY_NAME})
   else()
-    # add shared libraries and static libraries
-    add_library(${MODULE_STATIC_LIBRARY_NAME} STATIC)
-    target_link_libraries(${MODULE_STATIC_LIBRARY_NAME} PUBLIC ${MODULE_OBJECT_LIBRARY_NAME})  
 
-    add_library(${MODULE_SHARED_LIBRARY_NAME} SHARED)
-    # in windows, change the C++ library output name, adding "lib" prefix.
-    if(WIN32)
-      set_target_properties(${MODULE_SHARED_LIBRARY_NAME} PROPERTIES OUTPUT_NAME "lib${MODULE_PYTHON_NAME}")
-    endif()
+    # if building a single project lib, link object libs to the target here
+    if(BUILD_SINGLE_PROJECT_LIB)
+      target_link_libraries(${PROJECT_SHARED_LIBRARY_NAME} PUBLIC ${MODULE_OBJECT_LIBRARY_NAME})  
+      target_link_libraries(${PROJECT_STATIC_LIBRARY_NAME} PUBLIC ${MODULE_OBJECT_LIBRARY_NAME})
+    else()
+      # add shared libraries and static libraries
+      add_library(${MODULE_STATIC_LIBRARY_NAME} STATIC)
+      target_link_libraries(${MODULE_STATIC_LIBRARY_NAME} PUBLIC ${MODULE_OBJECT_LIBRARY_NAME})  
 
-    target_link_libraries(${MODULE_SHARED_LIBRARY_NAME} PUBLIC ${MODULE_OBJECT_LIBRARY_NAME})
+      add_library(${MODULE_SHARED_LIBRARY_NAME} SHARED)
+      # in windows, change the C++ library output name, adding "lib" prefix.
+      if(WIN32)
+        set_target_properties(${MODULE_SHARED_LIBRARY_NAME} PROPERTIES OUTPUT_NAME "lib${MODULE_PYTHON_NAME}")
+      endif()
+
+      target_link_libraries(${MODULE_SHARED_LIBRARY_NAME} PUBLIC ${MODULE_OBJECT_LIBRARY_NAME})
+      endif()
   endif()
 
 
@@ -175,8 +186,6 @@ function(practci_add_cpp_module)
     endif()
 
     # requires cmake policy CMP0079, introduced in cmake 3.13.
-    # TODO: disabled now target_link_libraries(python_pybind11 INTERFACE ${MODULE_PYTHON_TARGET_NAME}) # TODO: review this target name.
-
     message("MODULE_INSTALL_PYTHON_SITEARCH: ${MODULE_INSTALL_PYTHON_SITEARCH}")
 
     install(TARGETS ${MODULE_PYTHON_TARGET_NAME}
@@ -208,22 +217,25 @@ function(practci_add_cpp_module)
       EXPORT ${PROJECT_NAME}-targets COMPONENT Development
       PUBLIC_HEADER DESTINATION ${MODULE_INSTALL_INCLUDEDIR} COMPONENT Development
     )
-    
-    install(TARGETS ${MODULE_STATIC_LIBRARY_NAME}
-      EXPORT ${PROJECT_NAME}-targets
-      ARCHIVE DESTINATION ${MODULE_INSTALL_LIBDIR} COMPONENT Development
-    )
 
-    if(WIN32)
-      install(TARGETS ${MODULE_SHARED_LIBRARY_NAME}
+    # install module only if not building a single project lib
+    if(NOT BUILD_SINGLE_PROJECT_LIB)
+      install(TARGETS ${MODULE_STATIC_LIBRARY_NAME}
         EXPORT ${PROJECT_NAME}-targets
-        RUNTIME DESTINATION ${MODULE_INSTALL_LIBDIR} COMPONENT Runtime
+        ARCHIVE DESTINATION ${MODULE_INSTALL_LIBDIR} COMPONENT Development
       )
-    else()
-      install(TARGETS ${MODULE_SHARED_LIBRARY_NAME}
-        EXPORT ${PROJECT_NAME}-targets
-        LIBRARY DESTINATION ${MODULE_INSTALL_LIBDIR} COMPONENT Runtime
-      )
+
+      if(WIN32)
+        install(TARGETS ${MODULE_SHARED_LIBRARY_NAME}
+          EXPORT ${PROJECT_NAME}-targets
+          RUNTIME DESTINATION ${MODULE_INSTALL_LIBDIR} COMPONENT Runtime
+        )
+      else()
+        install(TARGETS ${MODULE_SHARED_LIBRARY_NAME}
+          EXPORT ${PROJECT_NAME}-targets
+          LIBRARY DESTINATION ${MODULE_INSTALL_LIBDIR} COMPONENT Runtime
+        )
+      endif()
     endif()
   endif()
 

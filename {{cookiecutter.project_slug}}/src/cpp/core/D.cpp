@@ -3,7 +3,7 @@
  *
  */
 
-#include "{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/D.h"
+#include <{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/D.h>
 
 // private include
 #include "E.h"

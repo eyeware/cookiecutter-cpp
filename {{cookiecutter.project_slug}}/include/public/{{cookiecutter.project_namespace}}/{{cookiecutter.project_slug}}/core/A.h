@@ -6,9 +6,10 @@
 #ifndef {{cookiecutter.project_namespace | upper }}_{{cookiecutter.project_slug | upper }}_A_H
 #define {{cookiecutter.project_namespace | upper }}_{{cookiecutter.project_slug | upper }}_A_H
 
-#include "{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/B.h"
 #include <memory>
 #include <string>
+
+#include <{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/B.h>
 
 namespace {{ cookiecutter.project_namespace }} {
 namespace {{ cookiecutter.project_slug }} {

@@ -1,4 +1,9 @@
 # -------------------------------------
+# PROJECT cmake generated files
+# -------------------------------------
+include/public/{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/version.h
+
+# -------------------------------------
 # Editor files
 # -------------------------------------
 *.swp

@@ -7,10 +7,10 @@
 #include <pybind11/pybind11.h>
 namespace py = pybind11;
 
-#include "{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/A.h"
-#include "{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/B.h"
-#include "{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/C.h"
-#include "{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/D.h"
+#include <{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/A.h>
+#include <{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/B.h>
+#include <{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/C.h>
+#include <{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/D.h>
 
 // add submodules: https://github.com/pybind/python_example/issues/26
 PYBIND11_MODULE(core, module) {

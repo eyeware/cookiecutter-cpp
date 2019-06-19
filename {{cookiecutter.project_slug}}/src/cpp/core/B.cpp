@@ -3,7 +3,7 @@
  *
  */
 
-#include "{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/B.h"
+#include <{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/B.h>
 
 namespace {{ cookiecutter.project_namespace }} {
 namespace {{ cookiecutter.project_slug }} {

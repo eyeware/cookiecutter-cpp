@@ -6,7 +6,7 @@
 #ifndef {{cookiecutter.project_namespace | upper }}_{{cookiecutter.project_slug | upper }}_D_H
 #define {{cookiecutter.project_namespace | upper }}_{{cookiecutter.project_slug | upper }}_D_H
 
-#include "{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/A.h"
+#include <{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/A.h>
 
 namespace {{ cookiecutter.project_namespace }} {
 namespace {{ cookiecutter.project_slug }} {

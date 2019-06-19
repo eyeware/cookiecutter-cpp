@@ -8,9 +8,19 @@ set(PROJECT_DESCRIPTION "{{ cookiecutter.description }}")
 set(PROJECT_AUTHOR      "{{ cookiecutter.author }}")
 set(PROJECT_URL         "https://{{ cookiecutter.git_server }}/{{ cookiecutter.username }}/{{ cookiecutter.project_slug }}")
 set(PROJECT_NAMESPACE   "{{ cookiecutter.project_namespace }}")
-set(PROJECT_LIB_TARGET   ${PROJECT_NAMESPACE}-${PROJECT_NAME})
+set(PROJECT_PREFIX ${PROJECT_NAMESPACE}/${PROJECT_NAME})
+set(PROJECT_PUBLIC_INCLUDEDIR ${PROJECT_SOURCE_DIR}/include/public)
+set(PROJECT_PRIVATE_INCLUDEDIR ${PROJECT_SOURCE_DIR}/include/private)
+set(PROJECT_OBJECT_LIBRARY_MODULE_LIST "") # TODO: used to link with single project lib ??
+set(PROJECT_SHARED_LIBRARY_MODULE_LIST "") # TODO: used to export components for the find_package
+set(PROJECT_STATIC_LIBRARY_MODULE_LIST "") # TODO: used to export components for the find_package
+set(PROJECT_SHARED_LIBRARY_NAME ${PROJECT_NAME})
+set(PROJECT_STATIC_LIBRARY_NAME ${PROJECT_NAME}-static)
+
 set(PROJECT_TEST_TARGET test_main)
-set(PROJECT_TARGETS_EXPORT_NAME "${PROJECT_NAME}Targets")
+set(PROJECT_TARGETS_EXPORT_NAME "${PROJECT_NAME}Modules")
+string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
+string(TOUPPER ${PROJECT_NAMESPACE} PROJECT_NAMESPACE_UPPER)
 
 option(BUILD_PYTHON_PYBIND11 "Build pybind11 python bindings." OFF)
 
@@ -20,6 +30,8 @@ option(BUILD_DOC "Build code documentation using Doxygen." OFF)
 option(BUILD_TESTS "Build project tests" ON)
 
 option(INSTALL_DEVELOPMENT "Install API header files, static libs and cmake export targets." OFF)
+
+option(BUILD_SINGLE_PROJECT_LIB "Compile all the project into a single library" OFF)
 
 if(MSVC)
   option(ENABLE_COVERAGE "Enable coverage for the project." OFF)
@@ -45,12 +57,6 @@ set(PROJECT_INSTALL_CMAKE_PACKAGEDIR ${CMAKE_INSTALL_PREFIX}/share/cmake/${PROJE
 list(INSERT CMAKE_MODULE_PATH 0 ${CMAKE_SOURCE_DIR}/cmake)
 
 
-string(TOUPPER ${PROJECT_NAME} PROJECT_NAME_UPPER)
-set(PROJECT_PREFIX ${PROJECT_NAMESPACE}/${PROJECT_NAME})
-set(PROJECT_PUBLIC_INCLUDEDIR ${PROJECT_SOURCE_DIR}/include/public)
-set(PROJECT_PRIVATE_INCLUDEDIR ${PROJECT_SOURCE_DIR}/include/private)
-
-
 include(CheckCXXCompilerFlag) # TODO: use new way
 
 include(CMakePackageConfigHelpers)
@@ -65,7 +71,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # add target for all modules of the project.
 # NOTE: add target_link_libraries(${PROJECT_NAME} <module name>) in each
 # module CMakeLists.
-add_library(${PROJECT_LIB_TARGET} INTERFACE)
 
 # default setup of the project instalation folders
 set(PROJECT_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_PREFIX})
@@ -73,6 +78,20 @@ set(PROJECT_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_PREFIX})
 message("PROJECT_INSTALL_INCLUDEDIR: ${PROJECT_INSTALL_INCLUDEDIR}")
 
 set(PROJECT_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR}/${PROJECT_PREFIX})
+
+# if building a single library for the project define libraries here
+# to link in each module
+if(BUILD_SINGLE_PROJECT_LIB)
+  add_library(${PROJECT_SHARED_LIBRARY_NAME} SHARED src/null.cpp)
+  add_library(${PROJECT_STATIC_LIBRARY_NAME} STATIC src/null.cpp)
+endif()
+
+# generate version file for the project with some macros and functions
+# for runtime version checks and static time checks 
+configure_file (
+  "${PROJECT_SOURCE_DIR}/src/version.h.in"
+  "${PROJECT_SOURCE_DIR}/src/version.h"
+  )
 
 if(BUILD_PYTHON_PYBIND11 OR BUILD_PYTHON_SWIG)
 
@@ -145,8 +164,6 @@ if(BUILD_PYTHON_PYBIND11 OR BUILD_PYTHON_SWIG)
 
   if (BUILD_PYTHON_PYBIND11)
     find_package(pybind11 REQUIRED)
-
-    add_library(python_pybind11 INTERFACE)
   endif()
 
   if(BUILD_PYTHON_SWIG)
@@ -173,6 +190,8 @@ endif()
 include(PracticalCIProject)
 
 add_subdirectory(src/cpp/core)
+
+
 
 # ------------------------------------------------------------------------------
 # Setup tests and checks

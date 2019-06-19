@@ -5,7 +5,7 @@
 
 #include <string>
 
-#include "{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/A.h"
+#include <{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/core/A.h>
 
 namespace {{ cookiecutter.project_namespace }} {
 namespace {{ cookiecutter.project_slug }} {
