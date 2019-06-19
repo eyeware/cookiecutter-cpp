@@ -1,5 +1,8 @@
 jobs:
 - job: linux_dev_cpp
+  variables:
+  - name: PROJECT_CONDA_ENV
+    value: '{{cookiecutter.project_namespace}}-{{cookiecutter.project_slug}}'
   strategy:
     maxParallel: 4
   pool:

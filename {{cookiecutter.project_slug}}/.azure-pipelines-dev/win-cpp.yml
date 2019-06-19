@@ -1,5 +1,8 @@
 jobs:
 - job: win_dev_cpp
+  variables:
+  - name: PROJECT_CONDA_ENV
+    value: '{{cookiecutter.project_namespace}}-{{cookiecutter.project_slug}}'
   strategy:
     maxParallel: 4
   pool:
@@ -17,7 +20,7 @@ jobs:
      rem cd is require because the above command changes the cwd.
      cd \d %SYSTEM_DEFAULTWORKINGDIRECTORY%\
 
-     call activate {{cookiecutter.project_slug}}
+     call activate %PROJECT_CONDA_ENV%
 
      mkdir build
      cd build

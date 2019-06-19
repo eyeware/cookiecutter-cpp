@@ -17,7 +17,7 @@ set -exuo pipefail
 # create conda environment for python build and c++ build
 conda env create --file ../conda/condaenv_dev.yaml
 
-conda activate {{cookiecutter.project_slug}}
+conda activate ${PROJECT_CONDA_ENV}
 
 python setup.py install
 
