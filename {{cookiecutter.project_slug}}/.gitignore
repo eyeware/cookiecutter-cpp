@@ -1,7 +1,8 @@
 # -------------------------------------
 # PROJECT cmake generated files
 # -------------------------------------
-include/public/{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/version.h
+include/public/{{cookiecutter.project_namespace}}/{{cookiecutter.project_slug}}/Version.h
+src/cpp/{{cookiecutter.project_slug}}/Version.cpp
 
 # -------------------------------------
 # Editor files
